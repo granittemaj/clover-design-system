@@ -1,0 +1,14 @@
+<!-- @dsCard group="Shop" height=460 -->
+<!doctype html>
+<html lang="sq">
+<head><meta charset="utf-8"><title>BouquetCard — preview</title></head>
+<body>
+<div id="root" class="cv-row" style="align-items:flex-start;gap:24px"></div>
+<script>
+  var L = window.Clover, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h(React.Fragment, null,
+    h(L.BouquetCard, { name: 'Bozhure', note: 'Bozhure rozë me eukalipt, të mbështjella në letër.', tag: 'Sezonale' }),
+    h(L.BouquetCard, { name: 'Buqeta e javës', note: 'Çfarë erdhi të hënën nga kopshti, e lidhur me dorë.', tone: 'matcha', sizes: [{ id: 'M', price: '€24' }, { id: 'L', price: '€36' }], defaultSize: 'M' })));
+</script>
+</body>
+</html>

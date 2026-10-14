@@ -1,0 +1,94 @@
+/* Clover — generated from tokens.json */
+:root, [data-theme="light"] {
+  --ground: #F3F4EC;
+  --ground-raised: #FBFBF6;
+  --ground-sunk: #E8EADF;
+  --line: #D5D9C8;
+  --line-strong: #7F8873;
+  --ink: #1E2A1F;
+  --ink-muted: #535E50;
+  --matcha: #4A671B;
+  --matcha-soft: #E2EBCB;
+  --on-matcha: #FFFFFF;
+  --peony: #B02A5A;
+  --peony-soft: #F7DCE5;
+  --on-peony: #FFFFFF;
+  --wine: #5E1A33;
+  --wine-soft: #F1DFE5;
+  --on-wine: #FBFBF6;
+  --candle: #855508;
+  --candle-soft: #F6E7C4;
+  --alert: #A33A12;
+  --leaf-lule: var(--peony);
+  --leaf-kafe: var(--matcha);
+  --leaf-vere: #5E1A33;
+  --leaf-embelsira: #C08A1E;
+  --primary: var(--matcha);
+  --on-primary: var(--on-matcha);
+  --primary-soft: var(--matcha-soft);
+  --shadow-sm: 0 1px 2px #1e2a1f14, 0 2px 6px #1e2a1f0f;
+  --shadow-lg: 0 6px 14px #1e2a1f14, 0 18px 40px -8px #1e2a1f29;
+  --focus-ring: 0 0 0 2px #f3f4ec, 0 0 0 4px #4a671b;
+}
+[data-theme="dark"] {
+  --ground: #1C1016;
+  --ground-raised: #28171F;
+  --ground-sunk: #140B10;
+  --line: #4A2E3C;
+  --line-strong: #9A7686;
+  --ink: #F4E9EC;
+  --ink-muted: #C4ABB5;
+  --matcha: #A9C56B;
+  --matcha-soft: #27311B;
+  --on-matcha: #1C1016;
+  --peony: #F28DB0;
+  --peony-soft: #43192C;
+  --on-peony: #1C1016;
+  --wine: #8E2A4E;
+  --wine-soft: #3A1626;
+  --on-wine: #F4E9EC;
+  --candle: #EDB54E;
+  --candle-soft: #3A2A10;
+  --alert: #FF9F7A;
+  --leaf-lule: var(--peony);
+  --leaf-kafe: var(--matcha);
+  --leaf-vere: #C25A7C;
+  --leaf-embelsira: #EDB54E;
+  --primary: var(--peony);
+  --on-primary: var(--on-peony);
+  --primary-soft: var(--peony-soft);
+  --shadow-sm: 0 1px 3px #000000a6;
+  --shadow-lg: 0 18px 40px -8px #000000cc;
+  --focus-ring: 0 0 0 2px #1c1016, 0 0 0 4px #f28db0;
+}
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --radius-sm: 4px;
+  --radius-md: 12px;
+  --radius-leaf: 32px;
+  --radius-full: 9999px;
+  --font-display: "Gloock", "Iowan Old Style", Georgia, serif;
+  --font-sans: "Familjen Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, Menlo, monospace;
+}
+@font-face { font-family: "Gloock"; src: url("fonts/Gloock-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Familjen Grotesk"; src: url("fonts/FamiljenGrotesk-Variable.woff2") format("woff2"); font-weight: 400 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "DM Mono"; src: url("fonts/DMMono-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "DM Mono"; src: url("fonts/DMMono-Medium.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+.display-xl { font-family: var(--font-display); font-size: 72px; line-height: 72px; font-weight: 400; letter-spacing: -0.02em; }
+.display-lg { font-family: var(--font-display); font-size: 44px; line-height: 48px; font-weight: 400; letter-spacing: -0.015em; }
+.display-md { font-family: var(--font-display); font-size: 28px; line-height: 34px; font-weight: 400; letter-spacing: -0.01em; }
+.lead { font-family: var(--font-sans); font-size: 20px; line-height: 30px; font-weight: 400; }
+.body { font-family: var(--font-sans); font-size: 16px; line-height: 24px; font-weight: 400; }
+.item { font-family: var(--font-sans); font-size: 17px; line-height: 24px; font-weight: 600; }
+.small { font-family: var(--font-sans); font-size: 14px; line-height: 20px; font-weight: 400; }
+.label { font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; }
+.price { font-family: var(--font-mono); font-size: 16px; line-height: 24px; font-weight: 500; }
+.hours { font-family: var(--font-mono); font-size: 13px; line-height: 20px; font-weight: 400; letter-spacing: 0.02em; }

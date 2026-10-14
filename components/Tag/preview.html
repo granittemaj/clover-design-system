@@ -1,0 +1,14 @@
+<!-- @dsCard group="Status" height=64 -->
+<!doctype html>
+<html lang="sq">
+<head><meta charset="utf-8"><title>Tag — preview</title></head>
+<body>
+<div id="root" class="cv-row"></div>
+<script>
+  var L = window.Clover, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h(React.Fragment, null,
+    h(L.Tag, null, 'Vegan'), h(L.Tag, { tone: 'matcha' }, 'Matcha'), h(L.Tag, { tone: 'peony' }, 'Sezonale'),
+    h(L.Tag, { tone: 'wine' }, 'Verë vendi'), h(L.Tag, { tone: 'candle' }, 'Sot')));
+</script>
+</body>
+</html>

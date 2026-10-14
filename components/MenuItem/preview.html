@@ -1,0 +1,16 @@
+<!-- @dsCard group="Menu" height=260 -->
+<!doctype html>
+<html lang="sq">
+<head><meta charset="utf-8"><title>MenuItem — preview</title></head>
+<body>
+<div id="root" style="padding:8px 24px;max-width:520px"></div>
+<script>
+  var L = window.Clover, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h(React.Fragment, null,
+    h(L.MenuItem, { name: 'Makiato e madhe', note: 'Espreso me shkumë qumështi', price: '€1.50' }),
+    h(L.MenuItem, { name: 'Matcha latte', note: 'Matcha ceremoniale, qumësht tërshëre', price: '€3.50', tag: 'Ditë', tagTone: 'matcha' }),
+    h(L.MenuItem, { name: 'Pjatë meze për dy', note: 'Djathë Sharri, ullinj, ajvar, bukë e pjekur', price: '€9.00', tag: 'Mbrëmje', tagTone: 'wine' }),
+    h(L.MenuItem, { name: 'Verë e kuqe, Rahovec', note: 'Vranac · gotë / shishe', price: '€4 / €22' })));
+</script>
+</body>
+</html>

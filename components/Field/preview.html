@@ -1,0 +1,15 @@
+<!-- @dsCard group="Forms" height=330 -->
+<!doctype html>
+<html lang="sq">
+<head><meta charset="utf-8"><title>Field — preview</title></head>
+<body>
+<div id="root" class="cv-stack"></div>
+<script>
+  var L = window.Clover, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h(React.Fragment, null,
+    h(L.Field, { id: 'per-ke', label: 'Për kë është?', placeholder: 'p.sh. për nënën, për ditëlindje', hint: 'Na ndihmon të zgjedhim ngjyrat.' }),
+    h(L.Field, { id: 'data', label: 'Data e dorëzimit', defaultValue: '31.02.2027', error: 'Kjo datë nuk ekziston. Zgjidhni një ditë nga kalendari.' }),
+    h(L.Field, { id: 'mesazhi', label: 'Mesazhi në kartolinë', multiline: true, placeholder: 'Shkruani deri në 200 shkronja' })));
+</script>
+</body>
+</html>
