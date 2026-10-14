@@ -1,7 +1,7 @@
 """Clover logo system generator.
 
 Four heart-shaped leaves, one per thing the house does (lule, kafe, ëmbëlsira,
-verë), a stem through the diagonal gap, and the wordmark outlined from Gloock.
+verë), each with the crescent watermark of white clover, and a tapered stem, and the wordmark outlined from Gloock.
 Run: python3 build_clover.py <fontdir> <outdir>
 """
 import math
@@ -29,17 +29,15 @@ def fmt(n):
 
 
 # ------------------------------------------------------------------ the mark
-# One leaf: a heart, tip at (0,0), lobes pointing up (negative y). 30 wide, 31 tall.
-LEAF = ("M0 0C-3.6-3.4-15-9.6-15-20.4C-15-27.4-9.6-31.4-4.6-30.6"
-        "C-2.2-30.2-.6-28.6 0-26.4C.6-28.6 2.2-30.2 4.6-30.6"
-        "C9.6-31.4 15-27.4 15-20.4C15-9.6 3.6-3.4 0 0Z")
+# One leaf: a heart, tip at (0,0), lobes pointing up (negative y), with the pale
+# crescent white clover carries on every leaf cut out of it (even-odd fill).
+LEAF = ("M0 0C-4.2-3.6-16.2-10.2-16.2-21.4C-16.2-28.6-10.6-32.6-5.4-31.8C-2.6-31.4-.7-29.6 0-27.2C.7-29.6 2.6-31.4 5.4-31.8C10.6-32.6 16.2-28.6 16.2-21.4C16.2-10.2 4.2-3.6 0 0ZM-9.6-18.2C-3.8-12.4 3.8-12.4 9.6-18.2C3.8-14.6-3.8-14.6-9.6-18.2Z")
 GAP = 5.6  # tip distance from the centre: the cut between leaves
 CX, CY = 50, 46
 # leaf order: top = lule (peony), right = kafe/matcha, bottom = verë (wine), left = ëmbëlsira (candle)
 LEAVES = [("peony", 45), ("matcha", 135), ("wine", 225), ("candle", 315)]
-STEM_D = "M50 60C50 70 51 78.5 56.5 86.5"  # drops through the cut between the two lower leaves
-STEM_W = 4.2
-BOX = (13.7, 9.7, 86.3, 88.6)  # drawn extent incl. the stem cap
+STEM = "M48.4 60.4A1.6 1.6 0 0 1 51.6 60.4C51.6 71 51.8 79.6 55.6 86.8A1.1 1.1 0 0 1 53.7 87.8C49.6 80.6 48.4 71.6 48.4 60.4Z"  # tapered, straight down the cut, curving out below the leaves
+BOX = (12.0, 8.0, 88.0, 88.2)  # drawn extent
 
 
 def leaf_path(rot):
@@ -50,9 +48,9 @@ def mark_body(colors, mono=None):
     parts = []
     for key, rot in LEAVES:
         fill = mono or colors[key]
-        parts.append(f'<path fill="{fill}" {leaf_path(rot)}/>')
+        parts.append(f'<path fill="{fill}" fill-rule="evenodd" {leaf_path(rot)}/>')
     stem = mono or colors["ink"]
-    parts.append(f'<path fill="none" stroke="{stem}" stroke-width="{STEM_W}" stroke-linecap="round" d="{STEM_D}"/>')
+    parts.append(f'<path fill="{stem}" d="{STEM}"/>')
     return "".join(parts)
 
 

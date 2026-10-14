@@ -4,6 +4,7 @@ Run from the repo root: python3 scripts/build_pages.py
 Reads tokens.json, assets/ and components/*/preview.html; writes static HTML.
 """
 import html
+import math
 import json
 import os
 import re
@@ -114,225 +115,143 @@ standalone("components/Applications/preview.html", "applications.html", "Clover 
            "Clover on real objects: fascia, cup, bouquet tag, business card, menus and Instagram posts.")
 
 # ------------------------------------------------------------------ index
-first = t["color"]["themes"][0]["id"]
-colors = t["color"]["tokens"]
-brand = ["leaf-lule", "leaf-kafe", "leaf-embelsira", "leaf-vere", "matcha", "peony", "wine", "candle"]
-neutral = ["ground", "ground-raised", "ground-sunk", "line", "line-strong", "ink", "ink-muted", "alert"]
-by_name = {c["name"]: c for c in colors}
+# The home page is hand-written in site/index.template.html; this fills in the
+# clover (same geometry as scripts/build_clover.py), the marquee and the shopfront.
+src = open("scripts/build_clover.py").read()
+LEAF = re.search(r'^LEAF = \("([^"]+)"\)', src, re.M).group(1)
+STEM = re.search(r'^STEM = "([^"]+)"', src, re.M).group(1)
+GAP = float(re.search(r"^GAP = ([\d.]+)", src, re.M).group(1))
+ORDER = [("lule", 45), ("kafe", 135), ("vere", 225), ("emb", 315)]
 
 
-def raw(name, theme):
-    v = by_name[name]["value"]
-    x = v.get(theme, v.get(first)) if isinstance(v, dict) else v
-    m = re.fullmatch(r"\{(.+)\}", x)
-    return raw(m.group(1), theme) if m else x
+def leaf_d(rot):
+    return f'transform="rotate({rot} 50 46) translate(50 {46 - GAP:g})" d="{LEAF}"'
 
 
-def swatches(names):
-    out = []
-    for n in names:
-        usage = html.escape(by_name[n]["usage"].split(". ")[0].rstrip(".") + ".")
-        out.append(f"""<div class="sw"><div class="chip" style="background:var(--{n})"></div>
-<div class="sw-meta"><b>{n}</b><span class="hex"><span class="on-day">{raw(n, 'light')}</span><span class="on-eve">{raw(n, 'dark')}</span></span><span class="use">{usage}</span></div></div>""")
-    return "\n".join(out)
+def clover_svg(cls="clover", extra="", label="Clover"):
+    leaves = "".join(f'<g class="lf lf-{k}" data-leaf="{k}"><path fill-rule="evenodd" {leaf_d(r)}/></g>' for k, r in ORDER)
+    return (f'<svg class="{cls}" viewBox="12 8 76 80.2" role="img" aria-label="{label}">'
+            f'{extra}{leaves}<path class="stem" d="{STEM}"/></svg>')
 
 
-type_rows = []
-for g in t["type"]["groups"]:
-    for st in g["styles"]:
-        meta = f"{st['fontSize']} / {st['lineHeight']} · {st['fontWeight']}"
-        type_rows.append(f"""<div class="ty"><div class="ty-meta"><b>{st['name']}</b><span>{meta}</span></div><div class="{st['name']} ty-sample">{html.escape(st['sample'])}</div></div>""")
+def blueprint():
+    g = ['<g aria-hidden="true">',
+         '<circle class="guide" cx="50" cy="46" r="38.6"/>',
+         f'<circle class="guide" cx="50" cy="46" r="{GAP:g}"/>',
+         '<path class="guide" d="M50 4V92M8 46H92"/>',
+         '<path class="guide" d="M18 14L82 78M82 14L18 78" stroke-dasharray="1 1"/>']
+    for _, r in ORDER:  # lobe circles and the crescent axis of each leaf
+        g.append(f'<g transform="rotate({r} 50 46) translate(50 {46 - GAP:g})">'
+                 '<circle class="guide" cx="-8.4" cy="-22.6" r="8.6"/><circle class="guide" cx="8.4" cy="-22.6" r="8.6"/></g>')
+    g += ['<text class="guide-txt" x="73" y="20">45°</text>',
+          '<text class="guide-txt" x="52" y="44.6">x</text>',
+          '<text class="guide-txt" x="86" y="70">r 38.6</text>',
+          '<text class="guide-txt" x="13" y="90">clover · ndërtimi</text>',
+          '</g>']
+    return clover_svg("clover", extra="".join(g), label="Clover mark with construction lines")
 
-logos = sorted(f for f in os.listdir("assets/Logos") if f.endswith(".svg"))
-logo_tiles = []
-for f in logos:
-    dark = any(k in f for k in ("-evening", "-paper"))
-    logo_tiles.append(f"""<a class="lt{' lt-dark' if dark else ''}" href="assets/Logos/{f}" download><span class="lt-art"><img src="assets/Logos/{f}" alt=""></span><span class="lt-name">{f}</span></a>""")
 
-icons = sorted(f for f in os.listdir("assets/Icons") if f.endswith(".svg"))
-icon_tiles = "\n".join(f"""<a class="ic" href="assets/Icons/{f}" download><img src="assets/Icons/{f}" alt=""><span>{f[5:-4]}</span></a>""" for f in icons)
+def mini():
+    leaves = "".join(f'<g class="lf lf-{k}"><path fill-rule="evenodd" {leaf_d(r)}/></g>' for k, r in ORDER)
+    return f'<svg class="clover" viewBox="12 8 76 80.2" aria-hidden="true">{leaves}<path class="stem" d="{STEM}"/></svg>'
 
-index = f"""<!doctype html>
-<html lang="sq">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Clover · Sistemi i dizajnit</title>
-<meta name="description" content="Clover: lule, kafe, ëmbëlsira, verë. Logo, colours, type, icons and components.">
-<link rel="icon" href="assets/Logos/clover-mark-day.svg" type="image/svg+xml">
-{THEME_BOOT}
-{HEAD_LIBS}
-<style>{NAV_CSS}
-body {{ margin: 0; background: var(--ground); color: var(--ink); }}
-.wrap {{ max-width: 1080px; margin: 0 auto; padding-inline: var(--space-6); }}
-section {{ padding-block: var(--space-12); border-bottom: 1px solid var(--line); }}
-.eyebrow {{ font-size: 12px; line-height: 16px; font-weight: 650; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-muted); margin: 0 0 var(--space-3); }}
-h2 {{ font-family: var(--font-display); font-weight: 400; font-size: clamp(30px, 5vw, 44px); line-height: 1.1; letter-spacing: -.015em; margin: 0 0 var(--space-4); text-wrap: balance; }}
-p.lede {{ margin: 0; font-size: 17px; line-height: 26px; color: var(--ink-muted); max-width: 62ch; }}
-.hero {{ display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--space-8); align-items: center; padding-block: var(--space-16); }}
-.hero h1 {{ font-family: var(--font-display); font-weight: 400; font-size: clamp(72px, 14vw, 156px); line-height: .9; letter-spacing: -.02em; margin: 0; }}
-.hero .tag {{ margin: var(--space-4) 0 var(--space-6); font-size: 18px; line-height: 28px; color: var(--ink-muted); max-width: 34ch; }}
-.quad {{ display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); max-width: 360px; width: 100%; justify-self: end; }}
-.quad div {{ aspect-ratio: 1; }}
-.q1 {{ background: var(--leaf-embelsira); border-radius: 50% 50% 4px 50%; }}
-.q2 {{ background: var(--leaf-lule); border-radius: 50% 50% 50% 4px; }}
-.q3 {{ background: var(--leaf-vere); border-radius: 50% 4px 50% 50%; }}
-.q4 {{ background: var(--leaf-kafe); border-radius: 4px 50% 50% 50%; }}
-.leaves {{ display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4); margin-top: var(--space-8); }}
-.leafcard {{ background: var(--ground-raised); border-radius: var(--radius-leaf) var(--radius-sm) var(--radius-leaf) var(--radius-sm); padding: var(--space-6); display: grid; gap: var(--space-2); }}
-.leafcard i {{ width: 28px; height: 28px; border-radius: 50% 50% 50% 4px; display: block; }}
-.leafcard b {{ font-family: var(--font-display); font-weight: 400; font-size: 24px; line-height: 30px; }}
-.leafcard span {{ font-size: 14px; line-height: 20px; color: var(--ink-muted); }}
-.cta-row {{ display: flex; flex-wrap: wrap; gap: var(--space-3); }}
-.cta-row a {{ text-decoration: none; }}
-.lts {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--space-3); margin-top: var(--space-6); }}
-.lt {{ display: grid; grid-template-rows: 140px auto; background: var(--ground-raised); border-radius: var(--radius-md); overflow: hidden; color: var(--ink); text-decoration: none; border: 1px solid var(--line); }}
-.lt-dark .lt-art {{ background: #1C1016; }}
-.lt-art {{ display: grid; place-items: center; padding: var(--space-4); background: #F3F4EC; }}
-.lt-art img {{ max-width: 100%; max-height: 104px; height: auto; }}
-.lt-name {{ font-family: var(--font-mono); font-size: 12px; line-height: 16px; padding: var(--space-3) var(--space-4); overflow-wrap: anywhere; }}
-.lt:hover {{ border-color: var(--line-strong); }}
-.lt:focus-visible, .ic:focus-visible {{ outline: none; box-shadow: var(--focus-ring); }}
-.sws {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: var(--space-4); margin-top: var(--space-6); }}
-.sw {{ display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: var(--space-3); align-items: start; }}
-.chip {{ width: 56px; height: 56px; border-radius: 50% 50% 50% 4px; border: 1px solid var(--line); }}
-.sw-meta {{ display: grid; gap: 2px; font-size: 13px; line-height: 18px; min-width: 0; }}
-.sw-meta b {{ font-weight: 650; font-size: 14px; }}
-.sw-meta .hex {{ font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }}
-.sw-meta .hex .on-day, .sw-meta .hex .on-eve {{ display: none; }}
-:root:not([data-theme="dark"]) .sw-meta .hex .on-day, [data-theme="dark"] .sw-meta .hex .on-eve {{ display: inline; }}
-.sw-meta .use {{ color: var(--ink-muted); }}
-h3.sub {{ font-family: var(--font-sans); font-size: 14px; letter-spacing: .14em; text-transform: uppercase; font-weight: 650; color: var(--ink-muted); margin: var(--space-8) 0 0; }}
-.ty {{ display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: var(--space-6); padding-block: var(--space-4); border-top: 1px solid var(--line); align-items: baseline; }}
-.ty-meta {{ display: grid; gap: 2px; font-size: 13px; }}
-.ty-meta span {{ font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }}
-.ty-sample {{ min-width: 0; overflow-wrap: anywhere; }}
-.label.ty-sample {{ text-transform: uppercase; }}
-.ics {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: var(--space-3); margin-top: var(--space-6); }}
-.ic {{ display: grid; justify-items: center; gap: var(--space-2); padding: var(--space-4); background: #F3F4EC; border-radius: var(--radius-md); color: #1E2A1F; text-decoration: none; font-size: 13px; border: 1px solid var(--line); }}
-.ic img {{ width: 36px; height: 36px; }}
-.demo {{ display: grid; gap: var(--space-6); margin-top: var(--space-6); }}
-.demo-row {{ display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }}
-.demo-cols {{ display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-8); align-items: start; }}
-.menu-box {{ background: var(--ground-raised); border-radius: var(--radius-leaf) var(--radius-sm) var(--radius-leaf) var(--radius-sm); padding: var(--space-6); }}
-.menu-box h4 {{ font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 34px; margin: 0 0 var(--space-2); }}
-footer {{ padding-block: var(--space-12); color: var(--ink-muted); font-size: 14px; line-height: 22px; }}
-footer a {{ color: var(--ink); }}
-p.lede a {{ color: var(--primary); text-underline-offset: 3px; }}
-body {{ overflow-x: hidden; }}
-@media (max-width: 760px) {{
-  .hero {{ grid-template-columns: 1fr; padding-block: var(--space-12); }}
-  .quad {{ justify-self: start; max-width: 240px; }}
-  .leaves {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }}
-  .demo-cols {{ grid-template-columns: 1fr; }}
-  .ty {{ grid-template-columns: 1fr; gap: var(--space-2); }}
-  .site-nav {{ padding-inline: var(--space-4); }}
-  .site-nav .links {{ gap: var(--space-3); font-size: 13px; }}
-}}
-</style>
-</head>
-<body>
-{nav()}
-<main class="wrap">
 
-<section class="hero">
-  <div>
-    <p class="eyebrow">Sistemi i dizajnit</p>
-    <h1>Clover</h1>
-    <p class="tag">Lule, kafe, ëmbëlsira, verë. Katër gjethe, një shtëpi. Lule ditën, verë mbrëmjen.</p>
-    <div class="cta-row">
-      <a class="cv-btn cv-btn-primary" href="logo.html">Udhëzimet e logos</a>
-      <a class="cv-btn cv-btn-quiet" href="applications.html">Shiko aplikimet</a>
-    </div>
-  </div>
-  <div class="quad" aria-hidden="true"><div class="q1"></div><div class="q2"></div><div class="q3"></div><div class="q4"></div></div>
-</section>
+words = [("Lule", "--leaf-lule"), ("Kafe", "--leaf-kafe"), ("Matcha", "--leaf-kafe"), ("Ëmbëlsira", "--leaf-embelsira"),
+         ("Verë", "--leaf-vere"), ("Meze", "--leaf-vere"), ("Buqeta me porosi", "--leaf-lule")]
+run = "".join(f'<span>{w}</span><i style="background:var({c})"></i>' for w, c in words)
+marquee = run + run
 
-<section>
-  <p class="eyebrow">Ideja</p>
-  <h2>Katër gjethe, një për secilën pjesë të shtëpisë</h2>
-  <p class="lede">A four-leaf clover is luck, and a gift from Clover should feel lucky. Each leaf is one thing the house does, and each takes that part's colour. By day the house serves coffee and matcha; after 17:00 it turns into a wine bar, and the whole palette turns with it. Try the Ditë / Mbrëmje switch at the top.</p>
-  <div class="leaves">
-    <div class="leafcard"><i style="background:var(--leaf-lule)"></i><b>Lule</b><span>Flowers and bouquets. Peony.</span></div>
-    <div class="leafcard"><i style="background:var(--leaf-kafe)"></i><b>Kafe</b><span>Coffee and matcha. Matcha green.</span></div>
-    <div class="leafcard"><i style="background:var(--leaf-embelsira)"></i><b>Ëmbëlsira</b><span>Sweets and small treats. Honey.</span></div>
-    <div class="leafcard"><i style="background:var(--leaf-vere)"></i><b>Verë</b><span>Wine and meze, the evening. Wine.</span></div>
-  </div>
-</section>
 
-<section id="logot">
-  <p class="eyebrow">Logot</p>
-  <h2>Download the logo files</h2>
-  <p class="lede">Outlined SVGs, no fonts needed. Use <b>-day</b> on light grounds, <b>-evening</b> on dark grounds and wine, <b>-ink</b> and <b>-paper</b> for one-colour print. Start with the horizontal lockup. Rules for clear space, sizes and misuse are on the <a href="logo.html">logo guidelines</a> page.</p>
-  <div class="lts">
-{chr(10).join(logo_tiles)}
-  </div>
-</section>
+def lockup_size(path):
+    m = re.search(r'viewBox="0 0 ([\d.]+) ([\d.]+)"', open(path).read())
+    return float(m.group(1)), float(m.group(2))
 
-<section>
-  <p class="eyebrow">Ngjyra</p>
-  <h2>Colour</h2>
-  <p class="lede">Values switch with the theme. Every text colour meets WCAG AA on the grounds it is used on, in both themes.</p>
-  <h3 class="sub">Leaves and brand</h3>
-  <div class="sws">{swatches(brand)}</div>
-  <h3 class="sub">Grounds and text</h3>
-  <div class="sws">{swatches(neutral)}</div>
-</section>
 
-<section>
-  <p class="eyebrow">Tipografia</p>
-  <h2>Gloock, Familjen Grotesk, DM Mono</h2>
-  <p class="lede">Gloock for headlines, the same face as the wordmark. Familjen Grotesk for everything people read. DM Mono for anything you count: prices, hours, sizes.</p>
-  <div style="margin-top:var(--space-6)">
-{chr(10).join(type_rows)}
-  </div>
-</section>
+def shopfront():
+    lw, lh = lockup_size("assets/Logos/clover-lockup-horizontal-evening.svg")
+    lock_h = 50
+    lock_w = lock_h * lw / lh
+    EVE = {"lule": "#F28DB0", "kafe": "#A9C56B", "vere": "#C25A7C", "emb": "#EDB54E"}
+    def bloom(x, y, rot, s, col):
+        return f'<path fill="{col}" fill-rule="evenodd" transform="translate({x} {y}) rotate({rot}) scale({s})" d="{LEAF}"/>'
+    bouquets = []
+    deep = {"lule": "#B02A5A", "pink": "#D2557F", "vere": "#5E1A33", "emb": "#C08A1E", "kafe": "#4A671B"}
+    vases = [(248, 50, "#3A1626", ["pink", "lule", "emb", "lule", "pink"]),
+             (352, 64, "#1E2A1F", ["vere", "lule", "pink", "lule", "emb", "lule"]),
+             (520, 46, "#5E1A33", ["emb", "pink", "lule", "pink", "emb"]),
+             (628, 60, "#3A1626", ["lule", "vere", "pink", "lule", "pink", "vere"])]
+    for vx, vh, vc, cols in vases:
+        top = 500 - vh
+        cx, cy = vx, top - 46
+        n = len(cols)
+        for j, c in enumerate(cols):
+            ang = -72 + 144 * j / (n - 1)
+            rad = 30 if j % 2 else 38
+            bx = cx + rad * math.sin(math.radians(ang))
+            by = cy - rad * math.cos(math.radians(ang)) * .8 + 10
+            bouquets.append(f'<path d="M{vx} {top + 2}Q{vx + (bx - vx) * .25:.0f} {top - 22} {bx:.0f} {by + 6:.0f}" stroke="#2F4A1A" stroke-width="2.2" fill="none"/>')
+        for j, c in enumerate(cols):
+            ang = -72 + 144 * j / (n - 1)
+            rad = 30 if j % 2 else 38
+            bx = cx + rad * math.sin(math.radians(ang))
+            by = cy - rad * math.cos(math.radians(ang)) * .8 + 10
+            bouquets.append(bloom(round(bx), round(by), round(ang), 0.92, deep[c]))
+        bouquets.append(f'<path d="M{vx - 17} {top}H{vx + 17}L{vx + 20} {top + vh - 8}Q{vx + 20} {top + vh} {vx + 12} {top + vh}H{vx - 12}Q{vx - 20} {top + vh} {vx - 20} {top + vh - 8}Z" fill="{vc}"/>')
+    windows = []
+    for k, wx in enumerate((200, 430, 660, 890)):
+        lit = k == 2
+        windows.append(f'<rect x="{wx}" y="104" width="110" height="112" rx="3" fill="{"url(#warm)" if lit else "#1A0F14"}" opacity="{".7" if lit else "1"}" stroke="#3A2530" stroke-width="6"/>')
+        windows.append(f'<path d="M{wx + 55} 104V216" stroke="#3A2530" stroke-width="4"/>')
+    stars = "".join(f'<circle cx="{x}" cy="{y}" r="{r}" fill="#F4E9EC" opacity=".55"/>' for x, y, r in
+                    ((40, 40, 1.4), (88, 110, 1), (60, 220, 1.2), (1140, 54, 1.4), (1170, 160, 1), (1110, 250, 1.2), (30, 330, 1)))
+    door_mark = "".join(f'<path fill="#F4E9EC" fill-rule="evenodd" {leaf_d(r)}/>' for _, r in ORDER) + f'<path fill="#F4E9EC" d="{STEM}"/>'
+    return f"""<svg class="front" viewBox="0 0 1200 640" role="img" aria-label="The Clover shopfront at night: a wine-red fascia with the logo, a warm-lit window full of flowers, a glass door and a wine board on the pavement.">
+<defs>
+<radialGradient id="warm" cx=".5" cy=".42" r=".75"><stop offset="0" stop-color="#FFE3A6"/><stop offset=".35" stop-color="#F2BE63"/><stop offset=".78" stop-color="#B8642F"/><stop offset="1" stop-color="#5A2128"/></radialGradient>
+<radialGradient id="halo"><stop offset="0" stop-color="#FFD58A" stop-opacity=".75"/><stop offset="1" stop-color="#FFD58A" stop-opacity="0"/></radialGradient>
+<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0D060A"/><stop offset="1" stop-color="#22111A"/></linearGradient>
+<filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="22"/></filter>
+</defs>
+<rect width="1200" height="640" fill="url(#sky)"/>
+{stars}
+<rect x="120" y="60" width="960" height="530" fill="#2A1820"/>
+<rect x="104" y="52" width="992" height="16" fill="#3A2530"/>
+{''.join(windows)}
+<rect x="160" y="246" width="880" height="80" rx="3" fill="#5E1A33"/>
+<image href="assets/Logos/clover-lockup-horizontal-evening.svg" x="{600 - lock_w / 2:.1f}" y="{286 - lock_h / 2:.1f}" width="{lock_w:.1f}" height="{lock_h}"/>
+<rect class="glow" x="150" y="330" width="620" height="260" fill="#F2BE63" opacity=".35" filter="url(#soft)"/>
+<rect x="180" y="352" width="560" height="214" fill="url(#warm)"/>
+<g class="glow"><circle cx="300" cy="384" r="34" fill="url(#halo)"/><circle cx="460" cy="384" r="34" fill="url(#halo)"/><circle cx="620" cy="384" r="34" fill="url(#halo)"/></g>
+<path d="M300 352V378M460 352V378M620 352V378" stroke="#3A1626" stroke-width="2"/>
+<circle cx="300" cy="382" r="6" fill="#FFF1CF"/><circle cx="460" cy="382" r="6" fill="#FFF1CF"/><circle cx="620" cy="382" r="6" fill="#FFF1CF"/>
+{''.join(bouquets)}
+<rect x="180" y="500" width="560" height="66" fill="#3A1626" opacity=".94"/>
+<text x="460" y="542" text-anchor="middle" fill="#F4E9EC" style="font-family:Gloock,Georgia,serif;font-size:26px;letter-spacing:-.4px">Lule me porosi · Kafe · Verë</text>
+<rect x="180" y="352" width="560" height="214" fill="none" stroke="#140B10" stroke-width="10"/>
+<path d="M460 352V500" stroke="#140B10" stroke-width="7"/>
+<rect x="170" y="566" width="580" height="22" fill="#3A1626"/>
+<rect x="798" y="352" width="160" height="238" fill="#140B10"/>
+<rect x="816" y="370" width="124" height="150" fill="url(#warm)" opacity=".9"/>
+<g transform="translate(846 404) scale(.82)" opacity=".9">{door_mark}</g>
+<rect x="922" y="470" width="6" height="44" rx="3" fill="#EDB54E"/>
+<g class="glow"><circle cx="780" cy="372" r="46" fill="url(#halo)"/><circle cx="976" cy="372" r="46" fill="url(#halo)"/></g>
+<rect x="776" y="364" width="8" height="16" rx="3" fill="#FFF1CF"/><rect x="972" y="364" width="8" height="16" rx="3" fill="#FFF1CF"/>
+<path d="M1000 588L1022 498H1078L1100 588" fill="#1C1016" stroke="#4A2E3C" stroke-width="3"/>
+<text x="1050" y="534" text-anchor="middle" fill="#F28DB0" style="font-family:Gloock,Georgia,serif;font-size:19px">Verë</text>
+<text x="1050" y="556" text-anchor="middle" fill="#F4E9EC" style="font-family:'DM Mono',monospace;font-size:11px">17–00</text>
+<rect x="0" y="588" width="1200" height="52" fill="#0D060A"/>
+<path d="M0 588H1200" stroke="#3A2530" stroke-width="2"/>
+<ellipse class="glow" cx="460" cy="606" rx="300" ry="12" fill="#F2BE63" opacity=".22" filter="url(#soft)"/>
+</svg>"""
 
-<section>
-  <p class="eyebrow">Ikonat</p>
-  <h2>Ten icons for the house</h2>
-  <p class="lede">24px line icons, 1.6px stroke, round caps. Click one to download it.</p>
-  <div class="ics">
-{icon_tiles}
-  </div>
-</section>
 
-<section>
-  <p class="eyebrow">Komponentët</p>
-  <h2>Components</h2>
-  <p class="lede">React 18 components on <code>window.Clover</code>. These are live: switch the theme and they follow.</p>
-  <div class="demo">
-    <div class="demo-row" id="d-buttons"></div>
-    <div class="demo-row" id="d-status"></div>
-    <div class="demo-cols">
-      <div class="menu-box"><h4>Kafe &amp; matcha</h4><div id="d-menu"></div></div>
-      <div id="d-bouquet"></div>
-    </div>
-    <div id="d-form" style="max-width:520px;display:grid;gap:var(--space-6)"></div>
-  </div>
-</section>
-
-<footer>
-  Clover design system. Logos, tokens, components and the brand book live in the <a href="https://github.com/granittemaj/clover-design-system">GitHub repo</a>. Names and contact details on the sample business card are placeholders.
-</footer>
-</main>
-{THEME_JS}
-<script>
-  var C = window.Clover, h = React.createElement;
-  function mount(id, el) {{ ReactDOM.createRoot(document.getElementById(id)).render(el); }}
-  mount('d-buttons', h(React.Fragment, null, h(C.Button, null, 'Porosit buqetën'), h(C.Button, {{ variant: 'quiet' }}, 'Rezervo tavolinë'), h(C.Button, {{ variant: 'ghost' }}, 'Shiko menunë')));
-  mount('d-status', h(React.Fragment, null, h(C.OpenNow, {{ part: 'day' }}), h(C.OpenNow, {{ part: 'evening' }}), h(C.Tag, {{ tone: 'matcha' }}, 'Matcha'), h(C.Tag, {{ tone: 'peony' }}, 'Sezonale'), h(C.Tag, {{ tone: 'candle' }}, 'Sot')));
-  mount('d-menu', h(React.Fragment, null,
-    h(C.MenuItem, {{ name: 'Makiato e madhe', note: 'Espreso me shkumë qumështi', price: '€1.50' }}),
-    h(C.MenuItem, {{ name: 'Matcha latte', note: 'Ceremoniale, qumësht tërshëre', price: '€3.50', tag: 'E re', tagTone: 'candle' }}),
-    h(C.MenuItem, {{ name: 'Trileçe', note: 'Ëmbëlsira e ditës', price: '€2.50' }})));
-  mount('d-bouquet', h(C.BouquetCard, {{ name: 'Bozhure', note: 'Bozhure rozë me eukalipt, të mbështjella në letër.', tag: 'Sezonale' }}));
-  mount('d-form', h(React.Fragment, null,
-    h(C.Field, {{ id: 'per-ke', label: 'Për kë është?', placeholder: 'p.sh. për nënën, për ditëlindje', hint: 'Na ndihmon të zgjedhim ngjyrat.' }}),
-    h(C.Field, {{ id: 'mesazhi', label: 'Mesazhi në kartolinë', multiline: true, placeholder: 'Shkruani deri në 200 shkronja' }})));
-</script>
-</body>
-</html>
-"""
-open("index.html", "w").write(index)
+tpl = open("site/index.template.html").read()
+out = (tpl.replace("__MINI__", mini())
+          .replace("__CLOVER_HERO__", clover_svg())
+          .replace("__CLOVER_STAGE__", clover_svg(label="Clover, one leaf for each part of the day"))
+          .replace("__CLOVER_BLUEPRINT__", blueprint())
+          .replace("__MARQUEE__", marquee)
+          .replace("__SHOPFRONT__", shopfront()))
+assert "__" not in re.sub(r"__proto__", "", out), "unfilled placeholder"
+open("index.html", "w").write(out)
 print("index.html, logo.html, applications.html written")
