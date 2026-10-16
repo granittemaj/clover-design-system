@@ -18,7 +18,7 @@ Lines to reuse:
 
 ## Logo
 
-The mark is a four-leaf clover drawn as one continuous pen line per leaf, with a stem that curves gently out from the centre. The pen never quite closes each leaf at its base, so the centre stays open and light. The wordmark is "Clover" in Coming Soon, the same hand, outlined. Files are in `assets/Logos/`.
+The mark is a four-leaf clover drawn as one continuous pen line per leaf, with a stem that curves gently out from the centre. The pen never quite closes each leaf at its base, so the centre stays open and light. The wordmark is "Clover" in Allison, a light signature script, outlined; the descriptor sits underneath in Mali Light, lowercase and widely spaced. Files are in `assets/Logos/`.
 
 - **Primary:** `clover-lockup-stacked-en-ink.svg` (clover above "Clover", descriptor below). Use it on cups, bottles, tags, boxes, menus and the shopfront.
 - **Horizontal:** `clover-lockup-horizontal-*` for narrow spaces: receipts, website header, email.
@@ -27,7 +27,7 @@ The mark is a four-leaf clover drawn as one continuous pen line per leaf, with a
 - **Albanian descriptor:** every lockup also comes as `-sq-` with "kafe · verë · lule".
 - **Colour:** espresso on cream, paper or kraft; cream on espresso or wine; wine on blush or cream. Never on busy photos without a paper panel.
 - **Clear space:** one leaf's height on every side. **Minimum size:** full lockup 30 mm wide, mark 8 mm.
-- Don't redraw the clover, add a fifth leaf, fill the leaves, change the line weight, or set "Clover" in another font.
+- Don't redraw the clover, add a fifth leaf, fill the leaves, change the line weight, or retype "Clover": use the files so the signature stays exact.
 
 ## Colour
 
@@ -48,8 +48,8 @@ Tokens with day and evening values are in `tokens.json` / `tokens.css`; every te
 
 ## Type
 
-- **Coming Soon:** the wordmark's hand. Headings, the descriptor, labels, prices.
-- **Mali:** soft and rounded. Menu descriptions, body text, the website.
+- **Allison:** the wordmark's signature hand. Use it only for short words: the name, labels, menu section titles, two or three words at most. Never for sentences, never smaller than 32px.
+- **Mali:** soft and rounded. Headlines in Light, body text, menu descriptions, prices, and the descriptor (lowercase, letter-spaced).
 - Both cover the full Albanian alphabet, including Ç and Ë.
 
 ## Materials and imagery

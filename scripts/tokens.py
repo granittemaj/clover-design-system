@@ -59,22 +59,23 @@ tokens = {
         ]},
     "type": {
         "fonts": [
-            {"family": "Coming Soon", "file": "fonts/ComingSoon-400.woff2", "weight": "400", "style": "normal"},
+            {"family": "Allison", "file": "fonts/Allison-400.woff2", "weight": "400", "style": "normal"},
             {"family": "Mali", "file": "fonts/Mali-300.woff2", "weight": "300", "style": "normal"},
             {"family": "Mali", "file": "fonts/Mali-400.woff2", "weight": "400", "style": "normal"},
             {"family": "Mali", "file": "fonts/Mali-600.woff2", "weight": "600", "style": "normal"},
         ],
         "families": {
-            "hand": "\"Coming Soon\", \"Comic Neue\", \"Segoe Print\", cursive",
+            "script": "Allison, \"Segoe Script\", \"Brush Script MT\", cursive",
             "body": "Mali, \"Nunito\", ui-rounded, system-ui, sans-serif",
         },
         "groups": [
-            {"name": "Hand", "family": "hand", "note": "Coming Soon: the wordmark's hand. Headings, labels, prices, the descriptor.", "styles": [
-                {"name": "display", "fontSize": "88px", "lineHeight": "92px", "fontWeight": 400, "sample": "Shihemi te Clover", "usage": "Hero lines, signage."},
-                {"name": "title", "fontSize": "48px", "lineHeight": "54px", "fontWeight": 400, "sample": "Buqeta e javës", "usage": "Section titles, menu headings."},
-                {"name": "heading", "fontSize": "28px", "lineHeight": "34px", "fontWeight": 400, "sample": "Kafe · Coffee", "usage": "Menu sections, card titles."},
-                {"name": "label", "fontSize": "15px", "lineHeight": "20px", "fontWeight": 400, "letterSpacing": "0.08em", "sample": "coffee · wine · flowers", "usage": "The descriptor, tags, small labels. Lowercase."}]},
-            {"name": "Body", "family": "body", "note": "Mali: soft and rounded, readable at menu sizes, full Albanian.", "styles": [
+            {"name": "Script", "family": "script", "note": "Allison: the wordmark's signature hand. Short words only: the name, labels, titles of two or three words. Never sentences, never below 32px.", "styles": [
+                {"name": "script-xl", "fontSize": "160px", "lineHeight": "150px", "fontWeight": 400, "sample": "Clover", "usage": "The name on signage and the website hero."},
+                {"name": "script-lg", "fontSize": "84px", "lineHeight": "84px", "fontWeight": 400, "sample": "Kafe", "usage": "Menu section titles, card titles."},
+                {"name": "script-md", "fontSize": "48px", "lineHeight": "52px", "fontWeight": 400, "sample": "katër gjethe", "usage": "Section labels above a headline."}]},
+            {"name": "Body", "family": "body", "note": "Mali: soft and rounded, readable at menu sizes, full Albanian. Light weight for headlines.", "styles": [
+                {"name": "headline", "fontSize": "48px", "lineHeight": "58px", "fontWeight": 300, "sample": "Tre gjëra që i bëjmë mirë.", "usage": "Section headlines."},
+                {"name": "descriptor", "fontSize": "15px", "lineHeight": "20px", "fontWeight": 300, "letterSpacing": "0.24em", "sample": "coffee · wine · flowers", "usage": "The descriptor and small labels: lowercase, widely spaced."},
                 {"name": "lead", "fontSize": "20px", "lineHeight": "32px", "fontWeight": 300, "sample": "Kafe në mëngjes, verë në mbrëmje, lule gjithë ditën.", "usage": "Intro paragraphs."},
                 {"name": "body", "fontSize": "16px", "lineHeight": "26px", "fontWeight": 400, "sample": "Na tregoni për kë është buqeta dhe e përgatisim me dorë.", "usage": "Everything else."},
                 {"name": "item", "fontSize": "16px", "lineHeight": "24px", "fontWeight": 600, "sample": "Matcha latte", "usage": "Menu item names."},

@@ -231,11 +231,11 @@ def t_menu():
     lines = []
     y = 104
     for title, items in (("Coffee", ["Espresso", "Latte", "Matcha latte"]), ("Wine", ["Glass of wine", "Selection"]), ("Flowers", ["Fresh bouquets", "Flower box"])):
-        lines.append(f'<text x="44" y="{y}" style="font-family:\'Coming Soon\',cursive;font-size:11px" fill="{INK}">{title}</text>')
+        lines.append(f'<text x="44" y="{y + 2}" style="font-family:Allison,cursive;font-size:22px" fill="{INK}">{title}</text>')
         y += 13
         for it in items:
-            lines.append(f'<text x="44" y="{y}" style="font-family:\'Coming Soon\',cursive;font-size:7px" fill="{INK}">{it}</text>'
-                         f'<text x="156" y="{y}" text-anchor="end" style="font-family:\'Coming Soon\',cursive;font-size:7px" fill="{INK}">{PRICES[it]}</text>')
+            lines.append(f'<text x="44" y="{y}" style="font-family:Mali,sans-serif;font-weight:300;font-size:6.6px" fill="{INK}">{it}</text>'
+                         f'<text x="156" y="{y}" text-anchor="end" style="font-family:Mali,sans-serif;font-weight:300;font-size:6.6px" fill="{INK}">{PRICES[it]}</text>')
             y += 11
         y += 9
     w = 22
@@ -243,7 +243,7 @@ def t_menu():
             '<rect x="20" y="24" width="160" height="306" rx="8" fill="#B48A5E"/><rect x="30" y="44" width="140" height="278" rx="2" fill="#FBF7F0"/>'
             '<rect x="70" y="16" width="60" height="30" rx="6" fill="#8F857C"/><rect x="82" y="22" width="36" height="8" rx="4" fill="#B48A5E"/>'
             + img(MARK, 100 - w / 2, 52, w, MARK_R)
-            + f'<text x="100" y="92" text-anchor="middle" style="font-family:\'Coming Soon\',cursive;font-size:15px" fill="{INK}">Clover</text>'
+            + f'<text x="100" y="94" text-anchor="middle" style="font-family:Allison,cursive;font-size:30px" fill="{INK}">Clover</text>'
             + "".join(lines))
     return tile("t-menu", "menuja", "0 0 200 344", body)
 

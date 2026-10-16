@@ -6,7 +6,8 @@ Writes every logo SVG into assets/Logos/. Needs fonttools and brotli.
 The clover is four clover leaves (wide round lobes, a notch, a short pointed base)
 drawn as single pen strokes with a little seeded wobble, plus a stem. The pen never
 quite closes each leaf at its base, so the centre stays open. The wordmark and the
-descriptor are Coming Soon, outlined.
+descriptor are outlined: the name in Allison (a light signature script), the
+descriptor in Mali Light, lowercase and widely spaced.
 """
 import math
 import os
@@ -24,7 +25,8 @@ CREAM = "#F5EDE0"
 KRAFT = "#C9A57E"
 WINE = "#5C2230"
 
-hand = TTFont("fonts/ComingSoon-400.woff2")
+SCRIPT = TTFont("fonts/Allison-400.woff2")
+BODY = TTFont("fonts/Mali-300.woff2")
 
 
 def f(v):
@@ -104,10 +106,11 @@ def clover(x, y, h, color, sw=2.5):
 
 
 # ------------------------------------------------------------------ type
-def text(t, size, x, baseline, color, tracking=0.0):
-    gs = hand.getGlyphSet()
-    cmap = hand.getBestCmap()
-    s = size / hand["head"].unitsPerEm
+def text(t, size, x, baseline, color, tracking=0.0, font=None):
+    font = font or SCRIPT
+    gs = font.getGlyphSet()
+    cmap = font.getBestCmap()
+    s = size / font["head"].unitsPerEm
     pen = SVGPathPen(gs)
     cur = x
     for ch in t:
@@ -117,9 +120,17 @@ def text(t, size, x, baseline, color, tracking=0.0):
     return f'<path fill="{color}" d="{pen.getCommands()}"/>', cur - x - tracking * size
 
 
-def centred(t, size, cx, baseline, color, tracking=0.0):
-    _, w = text(t, size, 0, 0, color, tracking)
-    return text(t, size, cx - w / 2, baseline, color, tracking)
+def centred(t, size, cx, baseline, color, tracking=0.0, font=None):
+    _, w = text(t, size, 0, 0, color, tracking, font)
+    return text(t, size, cx - w / 2, baseline, color, tracking, font)
+
+
+def desc_text(t, size, x, baseline, color):
+    return text(t, size, x, baseline, color, tracking=0.24, font=BODY)
+
+
+def desc_centred(t, size, cx, baseline, color):
+    return centred(t, size, cx, baseline, color, tracking=0.24, font=BODY)
 
 
 def svg(w, h, body, bg=None, title="Clover"):
@@ -142,48 +153,51 @@ if __name__ == "__main__":
     INKS = {"ink": INK, "cream": CREAM, "wine": WINE}
     mark_w = lambda h: (BOX[2] - BOX[0]) * h / (BOX[3] - BOX[1])
 
+    SW = 2.2  # clover line, matched to Allison's light pen
     for slug, c in INKS.items():
-        g, w = clover(10, 8, 104, c, sw=2.6)
+        g, w = clover(10, 8, 104, c, sw=2.4)
         write(f"clover-mark-{slug}.svg", svg(math.ceil(w + 20), 120, g, title="Clover mark"))
 
     for slug, c in INKS.items():
-        body, w = text("Clover", 140, 6, 118, c)
-        write(f"clover-wordmark-{slug}.svg", svg(math.ceil(w + 12), 150, body, title="Clover"))
+        body, w = text("Clover", 260, 10, 190, c)
+        write(f"clover-wordmark-{slug}.svg", svg(math.ceil(w + 30), 225, body, title="Clover"))
 
     for lang, desc in DESCRIPTORS.items():
         for slug, c in INKS.items():
-            _, ww = text("Clover", 140, 0, 0, c)
-            W = math.ceil(max(ww, 470) + 80)
-            mh = 230
-            g, _ = clover(W / 2 - mark_w(mh) / 2 - 6, 20, mh, c, sw=2.5)
-            word, _ = centred("Clover", 140, W / 2, 20 + mh + 112, c)
-            d, _ = centred(desc, 34, W / 2, 20 + mh + 112 + 74, c, tracking=0.06)
-            write(f"clover-lockup-stacked-{lang}-{slug}.svg", svg(W, 20 + mh + 112 + 100, g + word + d, title="Clover"))
+            _, ww = text("Clover", 270, 0, 0, c)
+            _, dw = desc_text(desc, 26, 0, 0, c)
+            W = math.ceil(max(ww, dw) + 110)
+            mh = 210
+            g, _ = clover(W / 2 - mark_w(mh) / 2 - 6, 24, mh, c, sw=SW)
+            base = 24 + mh + 170
+            word, _ = centred("Clover", 270, W / 2 + 8, base, c)
+            d, _ = desc_centred(desc, 26, W / 2, base + 92, c)
+            write(f"clover-lockup-stacked-{lang}-{slug}.svg", svg(W, base + 122, g + word + d, title="Clover"))
 
     for lang, desc in DESCRIPTORS.items():
         for slug, c in INKS.items():
-            mh = 190
-            g, mw = clover(14, 10, mh, c, sw=2.6)
-            x = 14 + mw + 26
-            word, ww = text("Clover", 120, x, 128, c)
-            d, dw = text(desc, 30, x + 6, 182, c, tracking=0.06)
+            mh = 200
+            g, mw = clover(16, 14, mh, c, sw=SW)
+            x = 16 + mw + 22
+            word, ww = text("Clover", 240, x, 168, c)
+            d, dw = desc_text(desc, 24, x + 30, 222, c)
             write(f"clover-lockup-horizontal-{lang}-{slug}.svg",
-                  svg(math.ceil(x + max(ww, dw + 6) + 20), 214, g + word + d, title="Clover"))
+                  svg(math.ceil(x + max(ww, dw + 30) + 24), 250, g + word + d, title="Clover"))
 
     for lang, desc in DESCRIPTORS.items():
         for slug, (fg, bg) in {"cream": (INK, CREAM), "espresso": (CREAM, INK), "kraft": (INK, KRAFT)}.items():
             C = 300
             body = f'<circle cx="{C}" cy="{C}" r="{C - 4}" fill="{bg}"/>'
             body += f'<circle cx="{C}" cy="{C}" r="{C - 26}" fill="none" stroke="{fg}" stroke-width="3"/>'
-            mh = 210
-            g, _ = clover(C - mark_w(mh) / 2 - 4, 92, mh, fg, sw=2.6)
-            word, _ = centred("Clover", 118, C, 400, fg)
-            d, _ = centred(desc, 28, C, 458, fg, tracking=0.06)
+            mh = 190
+            g, _ = clover(C - mark_w(mh) / 2 - 4, 78, mh, fg, sw=SW + .2)
+            word, _ = centred("Clover", 200, C + 6, 408, fg)
+            d, _ = desc_centred(desc, 21, C, 470, fg)
             write(f"clover-badge-{lang}-{slug}.svg", svg(2 * C, 2 * C, body + g + word + d, title="Clover"))
 
     for slug, (fg, bg) in {"cream": (INK, CREAM), "espresso": (CREAM, INK), "kraft": (INK, KRAFT)}.items():
         mh = 300
-        g, _ = clover(200 - mark_w(mh) / 2 - 6, 50, mh, fg, sw=2.8)
+        g, _ = clover(200 - mark_w(mh) / 2 - 6, 50, mh, fg, sw=2.6)
         write(f"clover-avatar-{slug}.svg", svg(400, 400, g, bg=bg, title="Clover"))
 
     print(len([n for n in os.listdir(OUT) if n.endswith(".svg")]), "logo files")
