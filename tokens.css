@@ -1,65 +1,47 @@
 /* Clover — generated from tokens.json */
 :root, [data-theme="light"] {
-  --ground: #F3F4EC;
-  --ground-raised: #FBFBF6;
-  --ground-sunk: #E8EADF;
-  --line: #D5D9C8;
-  --line-strong: #7F8873;
-  --ink: #1E2A1F;
-  --ink-muted: #535E50;
-  --matcha: #4A671B;
-  --matcha-soft: #E2EBCB;
-  --on-matcha: #FFFFFF;
-  --peony: #B02A5A;
-  --peony-soft: #F7DCE5;
-  --on-peony: #FFFFFF;
-  --wine: #5E1A33;
-  --wine-soft: #F1DFE5;
-  --on-wine: #FBFBF6;
-  --candle: #855508;
-  --candle-soft: #F6E7C4;
-  --alert: #A33A12;
-  --leaf-lule: var(--peony);
-  --leaf-kafe: var(--matcha);
-  --leaf-vere: #5E1A33;
-  --leaf-embelsira: #C08A1E;
-  --primary: var(--matcha);
-  --on-primary: var(--on-matcha);
-  --primary-soft: var(--matcha-soft);
-  --shadow-sm: 0 1px 2px #1e2a1f14, 0 2px 6px #1e2a1f0f;
-  --shadow-lg: 0 6px 14px #1e2a1f14, 0 18px 40px -8px #1e2a1f29;
-  --focus-ring: 0 0 0 2px #f3f4ec, 0 0 0 4px #4a671b;
+  --cream: #F5EDE0;
+  --paper: #FBF7F0;
+  --sand: #EADBC5;
+  --kraft: #C9A57E;
+  --line: #DCCBB3;
+  --line-strong: #9C8069;
+  --ink: #4B2E20;
+  --ink-muted: #77584A;
+  --blush: #EBCBC6;
+  --rose: #9A4753;
+  --sage: #566545;
+  --sage-soft: #DCE2CF;
+  --wine: #5C2230;
+  --sun: #F2DDB0;
+  --on-ink: #F5EDE0;
+  --primary: var(--ink);
+  --on-primary: var(--on-ink);
+  --shadow-sm: 0 1px 2px #4b2e2014, 0 4px 12px #4b2e200f;
+  --shadow-lg: 0 12px 30px -8px #4b2e2033, 0 30px 60px -20px #4b2e2026;
+  --focus-ring: 0 0 0 2px #f5ede0, 0 0 0 4px #4b2e20;
 }
 [data-theme="dark"] {
-  --ground: #1C1016;
-  --ground-raised: #28171F;
-  --ground-sunk: #140B10;
-  --line: #4A2E3C;
-  --line-strong: #9A7686;
-  --ink: #F4E9EC;
-  --ink-muted: #C4ABB5;
-  --matcha: #A9C56B;
-  --matcha-soft: #27311B;
-  --on-matcha: #1C1016;
-  --peony: #F28DB0;
-  --peony-soft: #43192C;
-  --on-peony: #1C1016;
-  --wine: #8E2A4E;
-  --wine-soft: #3A1626;
-  --on-wine: #F4E9EC;
-  --candle: #EDB54E;
-  --candle-soft: #3A2A10;
-  --alert: #FF9F7A;
-  --leaf-lule: var(--peony);
-  --leaf-kafe: var(--matcha);
-  --leaf-vere: #C25A7C;
-  --leaf-embelsira: #EDB54E;
-  --primary: var(--peony);
-  --on-primary: var(--on-peony);
-  --primary-soft: var(--peony-soft);
-  --shadow-sm: 0 1px 3px #000000a6;
-  --shadow-lg: 0 18px 40px -8px #000000cc;
-  --focus-ring: 0 0 0 2px #1c1016, 0 0 0 4px #f28db0;
+  --cream: #2B1C15;
+  --paper: #382419;
+  --sand: #22160F;
+  --kraft: #6B4E33;
+  --line: #4E3426;
+  --line-strong: #A48A76;
+  --ink: #F3E8D8;
+  --ink-muted: #CDB8A3;
+  --blush: #4A2C2E;
+  --rose: #E7A9B1;
+  --sage: #B4C29E;
+  --sage-soft: #2F3626;
+  --wine: #C9788A;
+  --sun: #5A4022;
+  --on-ink: #2B1C15;
+  --primary: var(--ink);
+  --on-primary: var(--on-ink);
+  --shadow-sm: 0 2px 6px #00000080;
+  --shadow-lg: 0 24px 50px -12px #000000b3;
+  --focus-ring: 0 0 0 2px #2b1c15, 0 0 0 4px #f3e8d8;
 }
 :root {
   --space-1: 4px;
@@ -70,25 +52,22 @@
   --space-8: 32px;
   --space-12: 48px;
   --space-16: 64px;
-  --radius-sm: 4px;
-  --radius-md: 12px;
-  --radius-leaf: 32px;
+  --radius-sm: 6px;
+  --radius-md: 14px;
+  --radius-lg: 28px;
   --radius-full: 9999px;
-  --font-display: "Gloock", "Iowan Old Style", Georgia, serif;
-  --font-sans: "Familjen Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "DM Mono", ui-monospace, Menlo, monospace;
+  --font-hand: "Coming Soon", "Comic Neue", "Segoe Print", cursive;
+  --font-body: Mali, "Nunito", ui-rounded, system-ui, sans-serif;
 }
-@font-face { font-family: "Gloock"; src: url("fonts/Gloock-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
-@font-face { font-family: "Familjen Grotesk"; src: url("fonts/FamiljenGrotesk-Variable.woff2") format("woff2"); font-weight: 400 700; font-style: normal; font-display: swap; }
-@font-face { font-family: "DM Mono"; src: url("fonts/DMMono-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
-@font-face { font-family: "DM Mono"; src: url("fonts/DMMono-Medium.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
-.display-xl { font-family: var(--font-display); font-size: 72px; line-height: 72px; font-weight: 400; letter-spacing: -0.02em; }
-.display-lg { font-family: var(--font-display); font-size: 44px; line-height: 48px; font-weight: 400; letter-spacing: -0.015em; }
-.display-md { font-family: var(--font-display); font-size: 28px; line-height: 34px; font-weight: 400; letter-spacing: -0.01em; }
-.lead { font-family: var(--font-sans); font-size: 20px; line-height: 30px; font-weight: 400; }
-.body { font-family: var(--font-sans); font-size: 16px; line-height: 24px; font-weight: 400; }
-.item { font-family: var(--font-sans); font-size: 17px; line-height: 24px; font-weight: 600; }
-.small { font-family: var(--font-sans); font-size: 14px; line-height: 20px; font-weight: 400; }
-.label { font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; }
-.price { font-family: var(--font-mono); font-size: 16px; line-height: 24px; font-weight: 500; }
-.hours { font-family: var(--font-mono); font-size: 13px; line-height: 20px; font-weight: 400; letter-spacing: 0.02em; }
+@font-face { font-family: "Coming Soon"; src: url("fonts/ComingSoon-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Mali"; src: url("fonts/Mali-300.woff2") format("woff2"); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: "Mali"; src: url("fonts/Mali-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Mali"; src: url("fonts/Mali-600.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
+.display { font-family: var(--font-hand); font-size: 88px; line-height: 92px; font-weight: 400; }
+.title { font-family: var(--font-hand); font-size: 48px; line-height: 54px; font-weight: 400; }
+.heading { font-family: var(--font-hand); font-size: 28px; line-height: 34px; font-weight: 400; }
+.label { font-family: var(--font-hand); font-size: 15px; line-height: 20px; font-weight: 400; letter-spacing: 0.08em; }
+.lead { font-family: var(--font-body); font-size: 20px; line-height: 32px; font-weight: 300; }
+.body { font-family: var(--font-body); font-size: 16px; line-height: 26px; font-weight: 400; }
+.item { font-family: var(--font-body); font-size: 16px; line-height: 24px; font-weight: 600; }
+.small { font-family: var(--font-body); font-size: 13px; line-height: 20px; font-weight: 400; }

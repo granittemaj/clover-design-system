@@ -1,179 +1,189 @@
-"""Clover logo system generator.
+"""Clover logo system generator: the hand-drawn line clover and the handwritten wordmark.
 
-Four heart-shaped leaves, one per thing the house does (lule, kafe, ëmbëlsira,
-verë), each with the crescent watermark of white clover, and a tapered stem, and the wordmark outlined from Gloock.
-Run: python3 build_clover.py <fontdir> <outdir>
+Run from the repo root: python3 scripts/build_clover.py
+Writes every logo SVG into assets/Logos/. Needs fonttools and brotli.
+
+The clover is four clover leaves (wide round lobes, a notch, a short pointed base)
+drawn as single pen strokes with a little seeded wobble, plus a stem. The pen never
+quite closes each leaf at its base, so the centre stays open. The wordmark and the
+descriptor are Coming Soon, outlined.
 """
 import math
 import os
-import sys
+import random
 
 from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
 
-FONTDIR, OUT = sys.argv[1], sys.argv[2]
+OUT = "assets/Logos"
 os.makedirs(OUT, exist_ok=True)
 
-DAY = dict(ink="#1E2A1F", peony="#B02A5A", matcha="#4A671B", candle="#C08A1E", wine="#5E1A33", ground="#F3F4EC")
-EVE = dict(ink="#F4E9EC", peony="#F28DB0", matcha="#A9C56B", candle="#EDB54E", wine="#C25A7C", ground="#1C1016")
-PAPER = "#F3F4EC"
+INK = "#4B2E20"      # espresso
+CREAM = "#F5EDE0"
+KRAFT = "#C9A57E"
+WINE = "#5C2230"
 
-gloock = TTFont(os.path.join(FONTDIR, "Gloock-Regular.woff2"))
-grotesk = TTFont(os.path.join(FONTDIR, "FamiljenGrotesk-Variable.woff2"))
+hand = TTFont("fonts/ComingSoon-400.woff2")
 
 
-def fmt(n):
-    s = f"{n:.2f}".rstrip("0").rstrip(".")
+def f(v):
+    s = f"{v:.2f}".rstrip("0").rstrip(".")
     return "0" if s in ("-0", "") else s
 
 
-# ------------------------------------------------------------------ the mark
-# One leaf: a heart, tip at (0,0), lobes pointing up (negative y), with the pale
-# crescent white clover carries on every leaf cut out of it (even-odd fill).
-LEAF = ("M0 0C-4.2-3.6-16.2-10.2-16.2-21.4C-16.2-28.6-10.6-32.6-5.4-31.8C-2.6-31.4-.7-29.6 0-27.2C.7-29.6 2.6-31.4 5.4-31.8C10.6-32.6 16.2-28.6 16.2-21.4C16.2-10.2 4.2-3.6 0 0ZM-9.6-18.2C-3.8-12.4 3.8-12.4 9.6-18.2C3.8-14.6-3.8-14.6-9.6-18.2Z")
-GAP = 5.6  # tip distance from the centre: the cut between leaves
-CX, CY = 50, 46
-# leaf order: top = lule (peony), right = kafe/matcha, bottom = verë (wine), left = ëmbëlsira (candle)
-LEAVES = [("peony", 45), ("matcha", 135), ("wine", 225), ("candle", 315)]
-STEM = "M48.4 60.4A1.6 1.6 0 0 1 51.6 60.4C51.6 71 51.8 79.6 55.6 86.8A1.1 1.1 0 0 1 53.7 87.8C49.6 80.6 48.4 71.6 48.4 60.4Z"  # tapered, straight down the cut, curving out below the leaves
-BOX = (12.0, 8.0, 88.0, 88.2)  # drawn extent
+# ------------------------------------------------------------------ the clover
+def catmull(p):
+    d = f"M{f(p[0][0])} {f(p[0][1])}"
+    n = len(p)
+    for i in range(n - 1):
+        p0 = p[i - 1] if i > 0 else p[i]
+        p1, p2 = p[i], p[i + 1]
+        p3 = p[i + 2] if i + 2 < n else p2
+        c1 = (p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6)
+        c2 = (p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6)
+        d += f"C{f(c1[0])} {f(c1[1])} {f(c2[0])} {f(c2[1])} {f(p2[0])} {f(p2[1])}"
+    return d
 
 
-def leaf_path(rot):
-    return f'transform="rotate({rot} {CX} {CY}) translate({CX} {CY - GAP})" d="{LEAF}"'
+# left half of one leaf, base at (0,0), lobes toward -y; mirrored for the right half
+LEFT = [(-1.1, -1.7), (-2.8, -4.4), (-6.4, -9.0), (-11.0, -13.6), (-14.0, -18.6), (-14.6, -23.2),
+        (-12.6, -27.2), (-8.6, -29.2), (-4.4, -28.4), (-1.4, -25.8), (0.0, -23.6)]
+
+# (rotation from "up", length, width factor, seed): the lower pair spreads to make room for the stem
+LEAVES = [(-44, 30.5, 1.00, 3), (42, 32.0, 1.04, 7), (120, 28.5, 0.98, 11), (238, 27.5, 1.02, 19)]
+TILT = -6
+CX, CY, GAP = 50, 40, 1.6
 
 
-def mark_body(colors, mono=None):
-    parts = []
-    for key, rot in LEAVES:
-        fill = mono or colors[key]
-        parts.append(f'<path fill="{fill}" fill-rule="evenodd" {leaf_path(rot)}/>')
-    stem = mono or colors["ink"]
-    parts.append(f'<path fill="{stem}" d="{STEM}"/>')
-    return "".join(parts)
+def leaf(length, width_k, seed, wobble=0.35):
+    rnd = random.Random(seed)
+    right = [(-x, y) for x, y in reversed(LEFT[:-1])]
+    right[-1] = (1.3, -1.5)
+    pts = LEFT + right
+    s = length / 29.2
+    out = []
+    for i, (x, y) in enumerate(pts):
+        jx, jy = (0, 0) if i in (0, len(pts) - 1) else (rnd.uniform(-wobble, wobble), rnd.uniform(-wobble, wobble))
+        out.append(((x * width_k + jx) * s, (y + jy) * s))
+    return out
 
 
-def mark_group(x, y, h, colors, mono=None):
+def place(pts, rot, dx, dy):
+    a = math.radians(rot)
+    ca, sa = math.cos(a), math.sin(a)
+    return [(x * ca - y * sa + dx, x * sa + y * ca + dy) for x, y in pts]
+
+
+def clover_paths():
+    paths = []
+    for rot, ln, wk, seed in LEAVES:
+        a = math.radians(rot)
+        paths.append(catmull(place(leaf(ln, wk, seed), rot + TILT, CX + GAP * math.sin(a), CY - GAP * math.cos(a))))
+    rnd = random.Random(42)
+    stem = []
+    for i in range(14):
+        u = i / 13
+        stem.append((CX + .6 + 2.2 * math.sin(u * 2.8) + 5.5 * u ** 2.2 + rnd.uniform(-.1, .1), CY + 3 + 45 * u))
+    paths.append(catmull(stem))
+    return paths
+
+
+PATHS = clover_paths()
+BOX = (17.6, 4.5, 82.4, 89.3)  # drawn extent of the clover in its 100 grid, stroke included
+
+
+def clover(x, y, h, color, sw=2.5):
+    """The clover with its drawn box scaled to height h, top-left at (x, y)."""
     x0, y0, x1, y1 = BOX
     s = h / (y1 - y0)
-    return (f'<g transform="translate({fmt(x - x0 * s)} {fmt(y - y0 * s)}) scale({fmt(s)})">{mark_body(colors, mono)}</g>',
-            (x1 - x0) * s)
+    body = "".join(f'<path d="{d}"/>' for d in PATHS)
+    g = (f'<g transform="translate({f(x - x0 * s)} {f(y - y0 * s)}) scale({f(s)})" fill="none" stroke="{color}" '
+         f'stroke-width="{sw}" stroke-linecap="round" stroke-linejoin="round">{body}</g>')
+    return g, (x1 - x0) * s
 
 
 # ------------------------------------------------------------------ type
-def text_path(font, text, size, x, baseline, tracking=0.0, wght=None):
-    gs = font.getGlyphSet(location={"wght": wght} if wght else None)
-    cmap = font.getBestCmap()
-    s = size / font["head"].unitsPerEm
+def text(t, size, x, baseline, color, tracking=0.0):
+    gs = hand.getGlyphSet()
+    cmap = hand.getBestCmap()
+    s = size / hand["head"].unitsPerEm
     pen = SVGPathPen(gs)
-    cursor = x
-    for ch in text:
+    cur = x
+    for ch in t:
         g = gs[cmap[ord(ch)]]
-        g.draw(TransformPen(pen, (s, 0, 0, -s, cursor, baseline)))
-        cursor += g.width * s + tracking * size
-    return pen.getCommands(), cursor - x - tracking * size
+        g.draw(TransformPen(pen, (s, 0, 0, -s, cur, baseline)))
+        cur += g.width * s + tracking * size
+    return f'<path fill="{color}" d="{pen.getCommands()}"/>', cur - x - tracking * size
 
 
-def wordmark(size, x, baseline, fill):
-    d, w = text_path(gloock, "clover", size, x, baseline, tracking=-0.01)
-    return f'<path fill="{fill}" d="{d}"/>', w
-
-
-def descriptor(text, size, cx, baseline, fill, tracking=0.22):
-    d, w = text_path(grotesk, text, size, 0, baseline, tracking=tracking, wght=560)
-    return f'<path fill="{fill}" transform="translate({fmt(cx - w / 2)} 0)" d="{d}"/>', w
+def centred(t, size, cx, baseline, color, tracking=0.0):
+    _, w = text(t, size, 0, 0, color, tracking)
+    return text(t, size, cx - w / 2, baseline, color, tracking)
 
 
 def svg(w, h, body, bg=None, title="Clover"):
-    rect = f'<rect width="{fmt(w)}" height="{fmt(h)}" fill="{bg}"/>' if bg else ""
-    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {fmt(w)} {fmt(h)}" width="{fmt(w)}" '
-            f'height="{fmt(h)}" role="img"><title>{title}</title>{rect}{body}</svg>\n')
+    rect = f'<rect width="{f(w)}" height="{f(h)}" fill="{bg}"/>' if bg else ""
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {f(w)} {f(h)}" width="{f(w)}" height="{f(h)}" '
+            f'role="img"><title>{title}</title>{rect}{body}</svg>\n')
 
 
 def write(name, content):
-    with open(os.path.join(OUT, name), "w") as f:
-        f.write(content)
+    with open(os.path.join(OUT, name), "w") as fh:
+        fh.write(content)
 
 
-# variants: (slug, leaf colours, mono ink, word ink)
-VARIANTS = [
-    ("day", DAY, None, DAY["ink"]),
-    ("evening", EVE, None, EVE["ink"]),
-    ("ink", DAY, DAY["ink"], DAY["ink"]),
-    ("paper", DAY, PAPER, PAPER),
-]
+if __name__ == "__main__":
+    for old in os.listdir(OUT):
+        if old.endswith(".svg"):
+            os.remove(os.path.join(OUT, old))
 
-# 1. mark
-for slug, cols, mono, _ in VARIANTS:
-    g, mw = mark_group(8, 8, 84, cols, mono)
-    write(f"clover-mark-{slug}.svg", svg(math.ceil(mw + 16), 100, g, title="Clover mark"))
+    DESCRIPTORS = {"en": "coffee · wine · flowers", "sq": "kafe · verë · lule"}
+    INKS = {"ink": INK, "cream": CREAM, "wine": WINE}
+    mark_w = lambda h: (BOX[2] - BOX[0]) * h / (BOX[3] - BOX[1])
 
-# 2. wordmark
-for slug, cols, mono, ink in [("ink", DAY, None, DAY["ink"]), ("paper", DAY, None, PAPER)]:
-    body, w = wordmark(120, 0, 100, ink)
-    write(f"clover-wordmark-{slug}.svg", svg(math.ceil(w) + 2, 116, body, title="Clover"))
+    for slug, c in INKS.items():
+        g, w = clover(10, 8, 104, c, sw=2.6)
+        write(f"clover-mark-{slug}.svg", svg(math.ceil(w + 20), 120, g, title="Clover mark"))
 
-# 3. horizontal lockup: mark spans the ascender, the stem ends near the baseline
-asc = 788 / 1000 * 120
-for slug, cols, mono, ink in VARIANTS:
-    base = 120
-    mh = asc * 1.08
-    mg, mw = mark_group(0, base - asc * 1.03, mh, cols, mono)
-    wm, ww = wordmark(120, mw + 30, base, ink)
-    write(f"clover-lockup-horizontal-{slug}.svg", svg(math.ceil(mw + 30 + ww + 2), 140, mg + wm, title="Clover"))
+    for slug, c in INKS.items():
+        body, w = text("Clover", 140, 6, 118, c)
+        write(f"clover-wordmark-{slug}.svg", svg(math.ceil(w + 12), 150, body, title="Clover"))
 
-# 4. stacked lockup
-for slug, cols, mono, ink in VARIANTS:
-    _, ww = wordmark(120, 0, 0, ink)
-    W = math.ceil(ww) + 40
-    mh = 170
-    mw = (BOX[2] - BOX[0]) * mh / (BOX[3] - BOX[1])
-    mg, _ = mark_group(W / 2 - mw / 2, 10, mh, cols, mono)
-    wm, _ = wordmark(120, 20, 10 + mh + 120, ink)
-    ds, _ = descriptor("LULE · KAFE · VERË", 22, W / 2, 10 + mh + 120 + 58, ink)
-    write(f"clover-lockup-stacked-{slug}.svg", svg(W, 10 + mh + 120 + 74, mg + wm + ds, title="Clover"))
+    for lang, desc in DESCRIPTORS.items():
+        for slug, c in INKS.items():
+            _, ww = text("Clover", 140, 0, 0, c)
+            W = math.ceil(max(ww, 470) + 80)
+            mh = 230
+            g, _ = clover(W / 2 - mark_w(mh) / 2 - 6, 20, mh, c, sw=2.5)
+            word, _ = centred("Clover", 140, W / 2, 20 + mh + 112, c)
+            d, _ = centred(desc, 34, W / 2, 20 + mh + 112 + 74, c, tracking=0.06)
+            write(f"clover-lockup-stacked-{lang}-{slug}.svg", svg(W, 20 + mh + 112 + 100, g + word + d, title="Clover"))
 
+    for lang, desc in DESCRIPTORS.items():
+        for slug, c in INKS.items():
+            mh = 190
+            g, mw = clover(14, 10, mh, c, sw=2.6)
+            x = 14 + mw + 26
+            word, ww = text("Clover", 120, x, 128, c)
+            d, dw = text(desc, 30, x + 6, 182, c, tracking=0.06)
+            write(f"clover-lockup-horizontal-{lang}-{slug}.svg",
+                  svg(math.ceil(x + max(ww, dw + 6) + 20), 214, g + word + d, title="Clover"))
 
-# 5. stamp
-def ring_text(text, size, cx, cy, r, fill, start_deg=-90, tracking=0.12, wght=600):
-    gs = grotesk.getGlyphSet(location={"wght": wght})
-    cmap = grotesk.getBestCmap()
-    s = size / grotesk["head"].unitsPerEm
-    widths = [gs[cmap[ord(c)]].width * s + tracking * size for c in text]
-    circ = 2 * math.pi * r
-    k = circ / sum(widths)
-    out, run = [], 0.0
-    for c, wd in zip(text, widths):
-        wd *= k
-        ang = start_deg + (run + wd / 2) / circ * 360
-        rad = math.radians(ang)
-        g = gs[cmap[ord(c)]]
-        pen = SVGPathPen(gs)
-        g.draw(TransformPen(pen, (s, 0, 0, -s, -g.width * s / 2, 0)))
-        d = pen.getCommands()
-        if d:
-            out.append(f'<path fill="{fill}" transform="translate({fmt(cx + r * math.cos(rad))} {fmt(cy + r * math.sin(rad))}) rotate({fmt(ang + 90)})" d="{d}"/>')
-        run += wd
-    return "".join(out)
+    for lang, desc in DESCRIPTORS.items():
+        for slug, (fg, bg) in {"cream": (INK, CREAM), "espresso": (CREAM, INK), "kraft": (INK, KRAFT)}.items():
+            C = 300
+            body = f'<circle cx="{C}" cy="{C}" r="{C - 4}" fill="{bg}"/>'
+            body += f'<circle cx="{C}" cy="{C}" r="{C - 26}" fill="none" stroke="{fg}" stroke-width="3"/>'
+            mh = 210
+            g, _ = clover(C - mark_w(mh) / 2 - 4, 92, mh, fg, sw=2.6)
+            word, _ = centred("Clover", 118, C, 400, fg)
+            d, _ = centred(desc, 28, C, 458, fg, tracking=0.06)
+            write(f"clover-badge-{lang}-{slug}.svg", svg(2 * C, 2 * C, body + g + word + d, title="Clover"))
 
+    for slug, (fg, bg) in {"cream": (INK, CREAM), "espresso": (CREAM, INK), "kraft": (INK, KRAFT)}.items():
+        mh = 300
+        g, _ = clover(200 - mark_w(mh) / 2 - 6, 50, mh, fg, sw=2.8)
+        write(f"clover-avatar-{slug}.svg", svg(400, 400, g, bg=bg, title="Clover"))
 
-for slug, cols, ink, bg in [("day", DAY, DAY["ink"], None), ("evening", EVE, EVE["ink"], EVE["ground"])]:
-    C = 160
-    body = f'<circle cx="{C}" cy="{C}" r="{C}" fill="{bg}"/>' if bg else ""
-    body += f'<circle cx="{C}" cy="{C}" r="150" fill="none" stroke="{ink}" stroke-width="3"/>'
-    body += f'<circle cx="{C}" cy="{C}" r="98" fill="none" stroke="{ink}" stroke-width="1.5"/>'
-    body += ring_text("CLOVER · LULE · KAFE · ËMBËLSIRA · VERË · ", 26, C, C, 114, ink)
-    mh = 112
-    mw = (BOX[2] - BOX[0]) * mh / (BOX[3] - BOX[1])
-    g, _ = mark_group(C - mw / 2, C - mh / 2, mh, cols)
-    write(f"clover-stamp-{slug}.svg", svg(320, 320, body + g, title="Clover stamp"))
-
-# 6. avatars
-for slug, cols, bg in [("day", DAY, DAY["ground"]), ("evening", EVE, EVE["ground"])]:
-    mh = 120
-    mw = (BOX[2] - BOX[0]) * mh / (BOX[3] - BOX[1])
-    g, _ = mark_group(100 - mw / 2, 100 - mh / 2, mh, cols)
-    write(f"clover-avatar-{slug}.svg", svg(200, 200, g, bg=bg, title="Clover avatar"))
-
-print("ok", sorted(os.listdir(OUT)))
+    print(len([n for n in os.listdir(OUT) if n.endswith(".svg")]), "logo files")

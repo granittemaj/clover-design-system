@@ -3,474 +3,353 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Clover · Lule, kafe, ëmbëlsira, verë</title>
-<meta name="description" content="Clover: a florist that is a café by day and a wine bar by evening. Four leaves, one house. The brand and design system.">
-<meta property="og:title" content="Clover · Katër gjethe, një shtëpi">
-<meta property="og:description" content="Lule, kafe, ëmbëlsira, verë. The Clover brand and design system.">
-<link rel="icon" href="assets/Logos/clover-mark-day.svg" type="image/svg+xml">
-<script>
-(function () {
-  document.documentElement.classList.add('js');
-  var pick = null;
-  try { pick = localStorage.getItem('clover-theme'); } catch (e) {}
-  var q = /[?&]theme=(light|dark)/.exec(location.search);
-  if (q) pick = q[1];
-  var h = new Date().getHours();
-  document.documentElement.setAttribute('data-theme', pick || ((h >= 17 || h < 6) ? 'dark' : 'light'));
-})();
-</script>
+<title>Clover · coffee · wine · flowers</title>
+<meta name="description" content="Clover: coffee in the morning, wine in the evening, flowers all day. The Clover brand: a hand-drawn four-leaf clover, a handwritten wordmark, and a warm golden-hour palette.">
+<meta property="og:title" content="Clover · coffee · wine · flowers">
+<meta property="og:description" content="Kafe në mëngjes, verë në mbrëmje, lule gjithë ditën.">
+<link rel="icon" href="assets/Logos/clover-mark-ink.svg" type="image/svg+xml">
+<script>document.documentElement.classList.add('js');</script>
 <link rel="stylesheet" href="tokens.css">
 <style>
-/* Layout: one long day. Hero → a sticky scroll story from 07:30 to 19:00 → the mark → colour → type → the shopfront at night. */
-:root {
-  --day-lule: #B02A5A; --day-kafe: #4A671B; --day-vere: #5E1A33; --day-emb: #C08A1E;
-  --eve-lule: #F28DB0; --eve-kafe: #A9C56B; --eve-vere: #C25A7C; --eve-emb: #EDB54E;
-  --gutter: clamp(16px, 4vw, 56px);
-  --ease-out: cubic-bezier(.16, 1, .3, 1);
-}
+/* Golden hour on paper. Hero (the clover draws itself) → four leaves → the board → logo kit → colour → type → menu → espresso footer. */
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--ground); color: var(--ink); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; transition: background-color .6s ease, color .6s ease; }
-body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 100; opacity: .07; mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
-[data-theme="dark"] body::after { mix-blend-mode: screen; opacity: .05; }
+body { margin: 0; background: var(--cream); color: var(--ink); font-family: var(--font-body); font-weight: 400; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 a { color: inherit; }
-img { max-width: 100%; }
-:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 6px; }
-.label { font-size: 12px; line-height: 16px; font-weight: 650; letter-spacing: .16em; text-transform: uppercase; }
-.display { font-family: var(--font-display); font-weight: 400; letter-spacing: -.02em; }
-.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+img { max-width: 100%; display: block; }
+:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 8px; }
+.hand { font-family: var(--font-hand); font-weight: 400; }
+.wrap { width: min(1240px, 100%); margin: 0 auto; padding-inline: clamp(16px, 4vw, 48px); }
 
-/* ---------- nav ---------- */
-.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: calc(env(safe-area-inset-top, 0px) + 14px) var(--gutter) 14px; transition: background-color .4s ease, color .4s ease; }
-.nav.scrolled { background: color-mix(in srgb, var(--ground) 82%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
-.brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
-.brand svg { width: 26px; height: 26px; }
-.brand span { font-family: var(--font-display); font-size: 26px; line-height: 1; letter-spacing: -.02em; margin-top: -4px; }
-.nav-right { display: flex; align-items: center; gap: clamp(8px, 2vw, 22px); min-width: 0; }
-.nav-links { display: flex; gap: 20px; font-size: 14px; font-weight: 600; }
-.nav-links a { text-decoration: none; opacity: .8; }
-.nav-links a:hover { opacity: 1; }
-.now { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px 7px 12px; border-radius: 999px; border: 1.5px solid var(--line-strong); font-size: 13px; font-weight: 600; background: transparent; color: inherit; cursor: pointer; font-family: inherit; white-space: nowrap; }
-.now i { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 0 0 var(--primary); animation: pulse 2.4s infinite; }
-.now .mono { font-size: 13px; font-weight: 500; }
-@keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 60%, transparent); } 70% { box-shadow: 0 0 0 8px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+/* paper grain + sunlight through leaves, over everything */
+body::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 60; opacity: .08; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .3  0 0 0 0 .2  0 0 0 0 .1  0 0 0 .8 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+.sun { position: fixed; inset: -10%; pointer-events: none; z-index: 1; opacity: .10; mix-blend-mode: multiply; background: url("assets/site/dapple.svg") center / cover no-repeat; animation: sway 14s ease-in-out infinite alternate; }
+.sun.b { opacity: .05; animation-duration: 19s; animation-delay: -6s; transform: scale(1.3); }
+@keyframes sway { from { transform: translate(-1.5%, -1%) rotate(-1.2deg); } to { transform: translate(1.5%, 1%) rotate(1.2deg); } }
+.glow { position: fixed; inset: 0; pointer-events: none; z-index: 0; background: radial-gradient(1200px 800px at 12% -10%, #f6dba5aa, transparent 60%), radial-gradient(900px 700px at 100% 0%, #f2ddb066, transparent 60%); }
+main, header, footer { position: relative; z-index: 2; }
 
-/* ---------- clover (shared) ---------- */
-.clover .lf { transform-box: view-box; transform-origin: 50px 46px; transition: transform .7s var(--ease-out), opacity .7s ease, fill .6s ease; }
-.clover .lf-lule { fill: var(--leaf-lule); } .clover .lf-kafe { fill: var(--leaf-kafe); }
-.clover .lf-vere { fill: var(--leaf-vere); } .clover .lf-emb { fill: var(--leaf-embelsira); }
-.clover .stem { fill: var(--ink); transition: fill .6s ease; }
+/* nav */
+.nav { position: sticky; top: 0; z-index: 40; transition: background-color .4s ease, box-shadow .4s ease; }
+.nav.on { background: color-mix(in srgb, var(--cream) 86%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 1px 0 var(--line); }
+.nav .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: calc(env(safe-area-inset-top, 0px) + 14px) 14px; }
+.nav .brand { display: flex; align-items: center; gap: 4px; text-decoration: none; }
+.nav .brand svg { width: 34px; height: 44px; }
+.nav .brand span { font-family: var(--font-hand); font-size: 30px; line-height: 1; }
+.nav .links { display: flex; gap: clamp(14px, 2.4vw, 30px); font-family: var(--font-hand); font-size: 18px; }
+.nav .links a { text-decoration: none; position: relative; }
+.nav .links a::after { content: ""; position: absolute; left: 0; right: 100%; bottom: -3px; height: 2px; border-radius: 2px; background: currentColor; transition: right .35s ease; }
+.nav .links a:hover::after { right: 0; }
 
-/* ---------- hero ---------- */
-.hero { position: relative; min-height: 100svh; display: grid; grid-template-rows: 1fr auto auto; padding: calc(env(safe-area-inset-top, 0px) + 84px) var(--gutter) 28px; overflow: hidden; }
-.hero-mark { align-self: center; justify-self: center; position: relative; width: min(46vh, 70vw, 440px); aspect-ratio: 1; }
-.hero-mark svg { width: 100%; height: 100%; overflow: visible; transition: transform .9s var(--ease-out); }
-.hero-word { margin: 0; text-align: center; font-size: clamp(112px, 27vw, 430px); line-height: .78; letter-spacing: -.045em; transform: translateY(.04em); }
-.hero-word span { display: inline-block; }
-.hero-foot { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-top: 18px; flex-wrap: wrap; }
-.hero-foot p { margin: 0; font-size: clamp(15px, 1.6vw, 18px); line-height: 1.4; max-width: 30ch; color: var(--ink-muted); }
-.leaf-caption { position: absolute; left: 50%; bottom: -6px; transform: translateX(-50%); white-space: nowrap; font-size: 13px; color: var(--ink-muted); opacity: 0; transition: opacity .3s ease; }
-.leaf-caption b { color: var(--ink); font-family: var(--font-display); font-weight: 400; font-size: 20px; margin-right: 6px; }
-.hero-mark.has-leaf .leaf-caption { opacity: 1; }
-.hero-mark .lf { cursor: pointer; }
-.hero-mark.has-leaf .lf { opacity: .28; }
-.hero-mark.has-leaf .lf.on { opacity: 1; transform: scale(1.07); }
-.scroll-cue { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
-.scroll-cue span { width: 1px; height: 34px; background: currentColor; position: relative; overflow: hidden; opacity: .5; }
-.scroll-cue span::after { content: ""; position: absolute; left: 0; top: -40%; width: 1px; height: 40%; background: var(--ground); animation: drip 1.8s infinite var(--ease-out); }
-@keyframes drip { to { top: 110%; } }
-/* entrance */
-.js .hero .lf { animation: unfold 1.3s var(--ease-out) both; }
-.js .hero .lf-emb { animation-delay: .15s; } .js .hero .lf-lule { animation-delay: .3s; }
-.js .hero .lf-kafe { animation-delay: .45s; } .js .hero .lf-vere { animation-delay: .6s; }
-.js .hero .stem { animation: grow 1s var(--ease-out) .85s both; }
-.js .hero-word span { animation: rise 1.2s var(--ease-out) both; }
-.js .hero-word span:nth-child(2) { animation-delay: .05s; } .js .hero-word span:nth-child(3) { animation-delay: .1s; }
-.js .hero-word span:nth-child(4) { animation-delay: .15s; } .js .hero-word span:nth-child(5) { animation-delay: .2s; } .js .hero-word span:nth-child(6) { animation-delay: .25s; }
-@keyframes unfold { from { transform: scale(.15) rotate(-60deg); opacity: 0; } to { transform: none; opacity: 1; } }
-@keyframes grow { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
-@keyframes rise { from { transform: translateY(40%); opacity: 0; } to { transform: none; opacity: 1; } }
+/* hero */
+.hero { min-height: calc(100svh - 72px); display: grid; place-items: center; text-align: center; padding-block: 24px 64px; }
+.hero-mark { width: clamp(150px, 22vw, 250px); margin: 0 auto -6px; }
+.hero-mark svg { width: 100%; height: auto; overflow: visible; }
+.hero-mark path { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.word { margin: 0; font-family: var(--font-hand); font-weight: 400; font-size: clamp(96px, 15vw, 210px); line-height: .95; letter-spacing: .005em; }
+.desc { margin: 14px 0 0; font-family: var(--font-hand); font-size: clamp(20px, 2.4vw, 30px); letter-spacing: .08em; }
+.desc-sq { margin: 6px 0 0; font-family: var(--font-hand); font-size: clamp(14px, 1.5vw, 17px); letter-spacing: .14em; color: var(--ink-muted); }
+.hero-line { margin: 34px auto 0; max-width: 36ch; font-size: clamp(16px, 1.6vw, 19px); line-height: 1.6; font-weight: 300; color: var(--ink-muted); }
+.cue { display: inline-flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 30px; font-family: var(--font-hand); font-size: 16px; text-decoration: none; color: var(--ink-muted); }
+.cue svg { width: 18px; height: 30px; animation: bob 2.2s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(6px); } }
+.js .hero-mark path { stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; animation: draw 1.1s cubic-bezier(.6, .05, .35, 1) both; }
+.js .hero-mark path:nth-child(2) { animation-delay: .55s; } .js .hero-mark path:nth-child(3) { animation-delay: 1.1s; }
+.js .hero-mark path:nth-child(4) { animation-delay: 1.65s; } .js .hero-mark path:nth-child(5) { animation-delay: 2.2s; animation-duration: .8s; }
+@keyframes draw { 0% { stroke-dashoffset: 1; opacity: 0; } 2% { opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 1; } }
+.js .word { clip-path: inset(-10% 100% -20% 0); animation: write 1.6s cubic-bezier(.55, .1, .4, 1) 2.6s forwards; }
+@keyframes write { to { clip-path: inset(-10% -2% -20% 0); } }
+.js .desc, .js .desc-sq, .js .hero-line, .js .cue { opacity: 0; transform: translateY(10px); animation: fadeup .9s ease forwards; }
+.js .desc { animation-delay: 4.1s; } .js .desc-sq { animation-delay: 4.3s; } .js .hero-line { animation-delay: 4.5s; } .js .cue { animation-delay: 4.8s; }
+@keyframes fadeup { to { opacity: 1; transform: none; } }
 
-/* ---------- marquee ---------- */
-.marquee { overflow: hidden; border-block: 1px solid var(--line); padding-block: 18px; white-space: nowrap; }
-.marquee div { display: inline-flex; gap: 36px; animation: slide 38s linear infinite; padding-right: 36px; }
-.marquee span { font-family: var(--font-display); font-size: clamp(30px, 4.6vw, 64px); line-height: 1; letter-spacing: -.02em; }
-.marquee i { display: inline-block; width: .5em; height: .5em; align-self: center; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); }
-@keyframes slide { to { transform: translateX(-50%); } }
+/* section heads */
+.sec { padding-block: clamp(72px, 10vw, 140px); }
+.kicker { font-family: var(--font-hand); font-size: 18px; letter-spacing: .08em; color: var(--ink-muted); margin: 0 0 6px; }
+.sec h2 { margin: 0; font-family: var(--font-hand); font-weight: 400; font-size: clamp(42px, 6vw, 76px); line-height: 1.02; }
+.sec .lede { margin: 18px 0 0; max-width: 54ch; font-size: clamp(16px, 1.5vw, 19px); line-height: 1.65; font-weight: 300; color: var(--ink-muted); }
+.head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: end; margin-bottom: clamp(36px, 5vw, 64px); }
 
-/* ---------- story ---------- */
-.story { position: relative; height: 520vh; }
-.stage { position: sticky; top: 0; height: 100svh; overflow: hidden; background: var(--st-bg, var(--ground)); color: var(--st-fg, var(--ink)); transition: background-color .9s ease, color .9s ease;
-  display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: center; gap: clamp(16px, 4vw, 64px); padding: 96px var(--gutter) 64px; }
-.stage .clover .lf path { stroke: var(--st-fg); stroke-width: .32; stroke-opacity: .5; fill-opacity: 0; transition: fill-opacity .7s ease, stroke-opacity .7s ease; }
-.stage .clover .lf.on { transform: scale(1.1); }
-.stage .clover .lf.on path { fill-opacity: 1; stroke-opacity: 0; }
-.stage .clover .lf-lule { fill: var(--c-lule); } .stage .clover .lf-kafe { fill: var(--c-kafe); }
-.stage .clover .lf-vere { fill: var(--c-vere); } .stage .clover .lf-emb { fill: var(--c-emb); }
-.stage .clover .stem { fill: var(--st-fg); }
-.chapters { position: relative; min-height: min(70svh, 620px); }
-.chapter { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; gap: 14px; opacity: 0; transform: translateY(28px); transition: opacity .6s ease, transform .9s var(--ease-out); pointer-events: none; }
-.chapter.on { opacity: 1; transform: none; pointer-events: auto; }
-.chapter .time { font-size: clamp(84px, 15vw, 250px); line-height: .82; letter-spacing: -.05em; margin: 0 0 6px -.04em; }
-.chapter .kicker { display: flex; align-items: center; gap: 10px; }
-.chapter .kicker i { width: 10px; height: 10px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--st-accent); }
-.chapter h2 { margin: 0; font-size: clamp(38px, 5vw, 72px); line-height: 1; }
-.chapter p { margin: 0; max-width: 40ch; font-size: clamp(15px, 1.4vw, 18px); line-height: 1.55; opacity: .82; }
-.chapter ul { list-style: none; margin: 8px 0 0; padding: 0; max-width: 440px; display: grid; }
-.chapter li { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-top: 1px solid color-mix(in srgb, var(--st-fg) 18%, transparent); font-size: 15px; }
-.chapter li .mono { font-size: 15px; }
-.stage-mark { position: relative; justify-self: center; width: min(40vw, 62svh, 560px); }
-.stage-mark svg { width: 100%; height: auto; display: block; overflow: visible; }
-.timeline { position: relative; margin-top: 28px; height: 30px; }
-.timeline::before { content: ""; position: absolute; left: 0; right: 0; top: 6px; height: 1px; background: currentColor; opacity: .25; }
-.timeline .dot { position: absolute; top: 1px; width: 11px; height: 11px; border-radius: 50%; background: var(--st-accent); transform: translateX(-50%); transition: left .15s linear, background-color .6s ease; }
-.timeline .tk { position: absolute; top: 16px; transform: translateX(-50%); font-family: var(--font-mono); font-size: 11px; opacity: .6; }
-.timeline .tk:first-of-type { transform: none; } .timeline .tk:last-of-type { transform: translateX(-100%); }
-.story-intro { position: absolute; top: 96px; left: var(--gutter); }
-.no-js-only { display: none; }
+/* four leaves */
+.leaves { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.lf { background: var(--paper); border-radius: var(--radius-md); padding: 28px 24px 26px; box-shadow: var(--shadow-sm); display: grid; gap: 6px; justify-items: start; transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+.lf:hover { transform: translateY(-6px) rotate(-.6deg); }
+.lf svg { width: 84px; height: 84px; margin-bottom: 8px; overflow: visible; }
+.lf svg path { fill: none; stroke: var(--ink); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.lf .tint { opacity: .9; }
+.lf b { font-family: var(--font-hand); font-weight: 400; font-size: 34px; line-height: 1; }
+.lf i { font-style: normal; font-family: var(--font-hand); font-size: 15px; letter-spacing: .08em; color: var(--ink-muted); }
+.lf p { margin: 6px 0 0; font-size: 15px; line-height: 1.55; color: var(--ink-muted); }
+.js .lf svg path { stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; transition: stroke-dashoffset 1.4s cubic-bezier(.6, .05, .35, 1) .2s, opacity .1s linear .2s; }
+.js .lf.in svg path { stroke-dashoffset: 0; opacity: 1; }
 
-/* ---------- sections ---------- */
-.sec { padding: clamp(72px, 11vw, 160px) var(--gutter); }
-.sec-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(20px, 4vw, 64px); align-items: end; margin-bottom: clamp(32px, 5vw, 64px); }
-.sec-head h2 { margin: 10px 0 0; font-size: clamp(48px, 8vw, 120px); line-height: .9; }
-.sec-head p { margin: 0; font-size: clamp(16px, 1.5vw, 19px); line-height: 1.55; color: var(--ink-muted); max-width: 46ch; }
+/* the board */
+.board { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-auto-rows: 168px; gap: 14px; }
+.tile { position: relative; overflow: hidden; border-radius: var(--radius-md); box-shadow: var(--shadow-lg); background: var(--sand); transition: transform .6s cubic-bezier(.2, .8, .2, 1); }
+.tile:hover { transform: translateY(-4px); }
+.tile svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.tile::after { content: ""; position: absolute; inset: -20%; background: url("assets/site/dapple.svg") center / cover; opacity: .16; mix-blend-mode: multiply; pointer-events: none; animation: sway 12s ease-in-out infinite alternate; }
+.tile .cap { position: absolute; left: 14px; bottom: 12px; z-index: 2; font-family: var(--font-hand); font-size: 14px; letter-spacing: .06em; padding: 4px 10px; border-radius: 999px; background: color-mix(in srgb, var(--paper) 85%, transparent); opacity: 0; transform: translateY(6px); transition: .35s ease; }
+.tile:hover .cap, .tile:focus-within .cap { opacity: 1; transform: none; }
+.t-logo { grid-column: span 5; grid-row: span 3; }
+.t-front { grid-column: span 4; grid-row: span 3; }
+.t-sign { grid-column: span 3; grid-row: span 2; }
+.t-box { grid-column: span 3; grid-row: span 1; }
+.t-cup { grid-column: span 3; grid-row: span 2; }
+.t-wine { grid-column: span 2; grid-row: span 2; }
+.t-bouquet { grid-column: span 3; grid-row: span 2; }
+.t-menu { grid-column: span 2; grid-row: span 2; }
+.t-cake { grid-column: span 2; grid-row: span 2; }
 
-/* mark / construction */
-.construct { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(20px, 4vw, 56px); align-items: center; }
-.blueprint { position: relative; background: var(--ground-raised); border-radius: var(--radius-leaf) var(--radius-sm) var(--radius-leaf) var(--radius-sm); aspect-ratio: 1; max-width: 100%; display: grid; place-items: center; overflow: hidden; }
-.blueprint svg { width: 86%; height: auto; overflow: visible; }
-.blueprint .guide { fill: none; stroke: var(--peony); stroke-width: .25; opacity: .9; transition: opacity .5s ease; }
-.blueprint .guide-txt { font: 500 2.4px var(--font-mono); fill: var(--peony); transition: opacity .5s ease; }
-.blueprint.plain .guide, .blueprint.plain .guide-txt { opacity: 0; }
-.blueprint-btn { position: absolute; top: 18px; right: 18px; }
-.parts { display: grid; gap: 0; }
-.part { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; align-items: start; padding: 20px 0; border-top: 1px solid var(--line); cursor: default; }
-.part:last-child { border-bottom: 1px solid var(--line); }
-.part i { width: 36px; height: 36px; border-radius: 50% 50% 50% 4px; transform: rotate(-45deg); transition: transform .5s var(--ease-out); }
-.part:hover i { transform: rotate(-45deg) scale(1.15); }
-.part b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 30px; line-height: 1.05; }
-.part span { color: var(--ink-muted); font-size: 15px; line-height: 1.5; }
-.lockups { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; margin-top: clamp(40px, 6vw, 80px); }
-.lk { position: relative; display: grid; place-items: center; min-height: 220px; padding: 28px; border-radius: var(--radius-md); text-decoration: none; overflow: hidden; transition: transform .5s var(--ease-out); }
-.lk:hover { transform: translateY(-4px); }
-.lk img { max-height: 120px; width: auto; }
-.lk .dl { position: absolute; left: 16px; bottom: 12px; right: 16px; display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 11px; opacity: 0; transform: translateY(6px); transition: .3s ease; }
-.lk:hover .dl, .lk:focus-visible .dl { opacity: .9; transform: none; }
-.w3 { grid-column: span 3; } .w2 { grid-column: span 2; }
-.lk.paper { background: #F3F4EC; color: #1E2A1F; box-shadow: inset 0 0 0 1px #D5D9C8; } .lk.night { background: #1C1016; color: #F4E9EC; }
-.lk.wine { background: #5E1A33; color: #FBFBF6; } .lk.matcha { background: #E2EBCB; color: #1E2A1F; }
-.lk.peony { background: #F7DCE5; color: #1E2A1F; } .lk.honey { background: #F6E7C4; color: #1E2A1F; }
-.more { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
-.pill { display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 22px; border-radius: 999px; font-weight: 650; font-size: 15px; text-decoration: none; border: 1.5px solid var(--line-strong); transition: background-color .3s ease, color .3s ease, border-color .3s ease; }
-.pill:hover { border-color: var(--ink); }
-.pill.solid { background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
-.pill.solid:hover { background: var(--ink); color: var(--ground); border-color: var(--ink); }
+/* logo kit */
+.kit { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
+.k { position: relative; display: grid; place-items: center; min-height: 250px; padding: 30px; border-radius: var(--radius-md); text-decoration: none; overflow: hidden; transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+.k:hover { transform: translateY(-4px); }
+.k img { max-height: 190px; width: auto; }
+.k .dl { position: absolute; right: 14px; top: 12px; font-family: var(--font-hand); font-size: 14px; letter-spacing: .06em; opacity: .8; }
+.k-a { grid-column: span 2; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line); color: var(--ink); }
+.k-b { grid-column: span 4; background: #4B2E20; color: #F5EDE0; }
+.k-c { grid-column: span 2; background: #C9A57E; color: #4B2E20; }
+.k-d { grid-column: span 2; background: #EBCBC6; color: #4B2E20; }
+.k-e { grid-column: span 2; background: #DCE2CF; color: #4B2E20; }
+.rules { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
+.rule { background: var(--paper); border-radius: var(--radius-md); padding: 22px 24px; font-size: 15px; line-height: 1.55; color: var(--ink-muted); box-shadow: var(--shadow-sm); }
+.rule b { display: block; font-family: var(--font-hand); font-weight: 400; font-size: 24px; color: var(--ink); margin-bottom: 6px; }
 
-/* colour chips */
-.chips { display: flex; gap: 12px; height: clamp(380px, 52vw, 560px); }
-.chip { flex: 1; min-width: 0; position: relative; border-radius: 120px 120px 120px 8px; padding: clamp(18px, 2.4vw, 32px); display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; transition: flex-grow .7s var(--ease-out); overflow: hidden; }
-.chip:hover, .chip:focus-within { flex-grow: 1.9; }
-.chip b { font-family: var(--font-display); font-weight: 400; font-size: clamp(30px, 3.6vw, 54px); line-height: 1; letter-spacing: -.02em; }
-.chip .mono { font-size: 12px; opacity: .85; }
-.chip .role { font-size: 14px; line-height: 1.45; max-width: 26ch; opacity: .9; }
-.c-emb { background: var(--leaf-embelsira); color: #1C1016; } .c-lule { background: var(--leaf-lule); color: #FBFBF6; }
-.c-vere { background: var(--leaf-vere); color: #FBFBF6; } .c-kafe { background: var(--leaf-kafe); color: #FBFBF6; }
-[data-theme="dark"] .c-lule, [data-theme="dark"] .c-kafe, [data-theme="dark"] .c-vere { color: #1C1016; }
-.neutrals { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
-.nt { border-radius: var(--radius-md); padding: 16px; min-height: 108px; display: flex; flex-direction: column; justify-content: flex-end; border: 1px solid var(--line); }
-.nt b { font-size: 14px; } .nt .mono { font-size: 11px; opacity: .75; }
+/* colour tags */
+.tags { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 14px; align-items: start; }
+.tag { position: relative; border-radius: 10px 10px 14px 14px; padding: 46px 16px 18px; min-height: 230px; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px; box-shadow: var(--shadow-sm); transform-origin: 50% 0; transition: transform .6s cubic-bezier(.2, .8, .2, 1); }
+.tag:nth-child(odd) { transform: rotate(-1.4deg); } .tag:nth-child(even) { transform: rotate(1.2deg) translateY(10px); }
+.tag:hover { transform: rotate(0) translateY(-4px); }
+.tag::before { content: ""; position: absolute; top: 16px; left: 50%; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: var(--cream); box-shadow: inset 0 1px 2px #0003; }
+.tag b { font-family: var(--font-hand); font-weight: 400; font-size: 26px; line-height: 1.05; }
+.tag span { font-size: 12px; letter-spacing: .04em; }
+.tag small { font-size: 13px; line-height: 1.4; opacity: .85; }
 
 /* type */
-.type-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(20px, 4vw, 64px); align-items: center; }
-.giant { font-family: var(--font-display); font-size: clamp(180px, 30vw, 460px); line-height: .8; letter-spacing: -.05em; margin: 0; }
-.giant em { font-style: normal; color: var(--peony); }
-.alphabet { font-family: var(--font-display); font-size: clamp(26px, 3vw, 40px); line-height: 1.25; word-spacing: .18em; margin: 18px 0 0; }
-.alphabet .x { color: var(--peony); }
-.faces { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: clamp(40px, 6vw, 72px); }
-.face { background: var(--ground-raised); border-radius: var(--radius-md); padding: 28px; display: grid; gap: 10px; align-content: start; }
-.face .aa { font-size: 88px; line-height: 1; }
-.face .nm { font-weight: 650; } .face .use { color: var(--ink-muted); font-size: 14px; line-height: 1.5; }
+.type { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(24px, 4vw, 64px); align-items: center; }
+.giant { font-family: var(--font-hand); font-size: clamp(120px, 20vw, 300px); line-height: .9; margin: 0; }
+.abc { font-family: var(--font-hand); font-size: clamp(22px, 2.4vw, 32px); line-height: 1.45; word-spacing: .2em; margin: 0; }
+.abc em { font-style: normal; color: var(--rose); }
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 28px; }
+.face { background: var(--paper); border-radius: var(--radius-md); padding: 24px; box-shadow: var(--shadow-sm); }
+.face .aa { font-size: 64px; line-height: 1; }
+.face b { display: block; margin-top: 12px; font-weight: 600; }
+.face p { margin: 6px 0 0; font-size: 14px; line-height: 1.55; color: var(--ink-muted); }
 
-/* night shopfront */
-.night { background: #140B10; color: #F4E9EC; padding: clamp(72px, 10vw, 140px) var(--gutter) 0; overflow: hidden; }
-.night .sec-head p { color: #C4ABB5; }
-.night .sec-head h2 { color: #F4E9EC; }
-.front { display: block; width: 100%; height: auto; max-width: 1280px; margin: 0 auto; }
-.glow { animation: flicker 5s ease-in-out infinite; }
-@keyframes flicker { 0%, 100% { opacity: .95; } 45% { opacity: .8; } 50% { opacity: .9; } 70% { opacity: .78; } }
+/* menu */
+.menu { position: relative; background: var(--paper); border-radius: 6px; box-shadow: var(--shadow-lg); padding: clamp(28px, 5vw, 64px); max-width: 980px; margin: 0 auto; }
+.menu::before { content: ""; position: absolute; top: -18px; left: 50%; width: 160px; height: 40px; margin-left: -80px; border-radius: 10px; background: linear-gradient(#9b8c80, #6f635a); box-shadow: 0 6px 10px -4px #0005; }
+.menu-top { text-align: center; margin-bottom: 36px; }
+.menu-top img { width: 96px; margin: 0 auto; }
+.menu-top .hand { font-size: 56px; line-height: 1; margin-top: -4px; }
+.menu-top .d { font-family: var(--font-hand); letter-spacing: .08em; color: var(--ink-muted); margin-top: 6px; }
+.cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 4vw, 48px); }
+.cols h3 { margin: 0 0 12px; font-family: var(--font-hand); font-weight: 400; font-size: 30px; display: flex; align-items: baseline; gap: 10px; }
+.cols h3 small { font-size: 16px; color: var(--ink-muted); letter-spacing: .06em; }
+.row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 9px 0; border-bottom: 1px dashed var(--line); font-size: 15px; }
+.row span:first-child small { display: block; font-size: 12.5px; color: var(--ink-muted); }
+.row .p { font-family: var(--font-hand); font-size: 17px; font-variant-numeric: tabular-nums; }
+.menu-note { margin: 26px 0 0; text-align: center; font-size: 13px; color: var(--ink-muted); }
+.doodle { position: absolute; width: 34px; height: 34px; }
+.doodle path { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
 /* footer */
-.foot { background: #140B10; color: #F4E9EC; padding: clamp(48px, 7vw, 96px) var(--gutter) calc(env(safe-area-inset-bottom, 0px) + 32px); border-top: 1px solid #3A2530; }
-.foot-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; font-size: 15px; line-height: 1.6; }
-.foot-grid .label { color: #C4ABB5; margin-bottom: 8px; display: block; }
-.foot-grid a { color: #F4E9EC; }
-.foot-word { font-family: var(--font-display); font-size: clamp(100px, 25vw, 400px); line-height: .8; letter-spacing: -.045em; margin: 48px 0 0; color: #F4E9EC; }
+.foot { background: #4B2E20; color: #F5EDE0; padding-block: clamp(64px, 9vw, 120px) calc(env(safe-area-inset-bottom, 0px) + 40px); position: relative; z-index: 2; }
+.foot .wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: center; }
+.foot img { width: min(360px, 80%); }
+.foot h2 { margin: 0; font-family: var(--font-hand); font-weight: 400; font-size: clamp(40px, 5vw, 64px); line-height: 1.05; }
+.foot p { color: #CDB8A3; line-height: 1.7; }
+.foot a { color: #F5EDE0; }
+.foot .links { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 18px; font-family: var(--font-hand); font-size: 18px; }
 
-/* reveal on scroll */
-.js .rv { opacity: 0; transform: translateY(26px); transition: opacity .9s ease, transform 1.1s var(--ease-out); }
+/* reveal */
+.js .rv { opacity: 0; transform: translateY(24px); transition: opacity .9s ease, transform 1.1s cubic-bezier(.2, .8, .2, 1); }
 .js .rv.in { opacity: 1; transform: none; }
 
-@media (max-width: 860px) {
-  .nav-links { display: none; }
-  .hero-foot p:last-child { display: none; }
-  .stage { grid-template-columns: 1fr; grid-template-rows: auto 1fr; align-items: start; padding-top: 84px; gap: 8px; }
-  .stage-mark { width: min(44vw, 30svh); order: -1; justify-self: start; }
-  .chapters { min-height: 58svh; }
-  .chapter { justify-content: flex-start; }
-  .chapter .time { font-size: clamp(72px, 24vw, 140px); }
-  .chapter ul { display: none; }
-  .story-intro { display: none; }
-  .sec-head, .construct, .type-grid { grid-template-columns: 1fr; }
-  .lockups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .w3, .w2 { grid-column: span 2; }
-  .lk { min-height: 160px; }
-  .chips { flex-wrap: wrap; height: auto; }
-  .chip { flex: 1 1 calc(50% - 6px); height: 240px; border-radius: 80px 80px 80px 8px; }
-  .chip:hover { flex-grow: 1; }
-  .neutrals { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .faces { grid-template-columns: 1fr; }
-  .foot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 980px) {
+  .board { grid-template-columns: repeat(6, minmax(0, 1fr)); grid-auto-rows: 150px; }
+  .t-logo, .t-front { grid-column: span 6; grid-row: span 3; }
+  .t-sign, .t-cup, .t-bouquet { grid-column: span 3; grid-row: span 2; }
+  .t-box { grid-column: span 3; grid-row: span 1; }
+  .t-wine, .t-menu, .t-cake { grid-column: span 2; grid-row: span 2; }
+  .tags { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .leaves { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  .nav .links { display: none; }
+  .head, .type, .foot .wrap { grid-template-columns: 1fr; }
+  .board { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 140px; }
+  .t-logo, .t-front { grid-column: span 2; grid-row: span 3; }
+  .t-sign, .t-cup, .t-bouquet, .t-wine, .t-menu, .t-cake { grid-column: span 1; grid-row: span 2; }
+  .t-box { grid-column: span 2; grid-row: span 1; }
+  .kit { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .k-a, .k-b, .k-c, .k-d, .k-e { grid-column: span 2; }
+  .rules, .pair { grid-template-columns: 1fr; }
+  .tags { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cols { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
-  html { scroll-behavior: auto; }
-  .js .rv { opacity: 1; transform: none; }
+  .js .hero-mark path, .js .lf svg path { stroke-dashoffset: 0; opacity: 1; }
+  .js .word { clip-path: none; }
+  .js .desc, .js .desc-sq, .js .hero-line, .js .cue, .js .rv { opacity: 1; transform: none; }
 }
 </style>
 </head>
 <body>
+<div class="glow" aria-hidden="true"></div>
+<div class="sun" aria-hidden="true"></div>
+<div class="sun b" aria-hidden="true"></div>
 
 <header class="nav" id="nav">
-  <a class="brand" href="#top" aria-label="Clover">__MINI__<span>clover</span></a>
-  <div class="nav-right">
-    <nav class="nav-links" aria-label="Seksionet">
-      <a href="#dita">Dita</a><a href="#shenja">Shenja</a><a href="#ngjyrat">Ngjyrat</a><a href="#shkronjat">Shkronjat</a><a href="applications.html">Aplikime</a>
-    </nav>
-    <button class="now" id="now" type="button" title="Ndrysho ditë / mbrëmje"><i></i><span class="mono" id="clock">--:--</span><span id="part">Ditë</span></button>
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Clover">__MINI__<span>Clover</span></a>
+    <nav class="links" aria-label="Seksionet"><a href="#gjethet">Gjethet</a><a href="#bordi">Bordi</a><a href="#logo">Logo</a><a href="#ngjyrat">Ngjyrat</a><a href="#menuja">Menuja</a></nav>
   </div>
 </header>
 
 <main id="top">
-
-<section class="hero" aria-label="Clover">
-  <div class="hero-mark" id="heroMark">
-    __CLOVER_HERO__
-    <div class="leaf-caption" id="leafCaption" aria-live="polite"></div>
-  </div>
-  <h1 class="hero-word display" aria-label="clover"><span>c</span><span>l</span><span>o</span><span>v</span><span>e</span><span>r</span></h1>
-  <div class="hero-foot">
-    <p><span class="label" style="display:block;color:var(--ink);margin-bottom:6px">Katër gjethe, një shtëpi</span>Lule, kafe, ëmbëlsira dhe verë, nën të njëjtin çati.</p>
-    <a class="scroll-cue label" href="#dita"><span></span>Një ditë te Clover</a>
-    <p style="text-align:right">Lule ditën, verë mbrëmjen. Prek një gjethe për ta njohur.</p>
+<section class="hero wrap">
+  <div>
+    <div class="hero-mark">__CLOVER_DRAW__</div>
+    <h1 class="word">Clover</h1>
+    <p class="desc">coffee · wine · flowers</p>
+    <p class="desc-sq">kafe · verë · lule</p>
+    <p class="hero-line">Kafe në mëngjes, verë në mbrëmje, lule gjithë ditën. Një vend i vogël me dritë, letër kraft dhe pak fat.</p>
+    <a class="cue" href="#gjethet">shiko më shumë<svg viewBox="0 0 18 30" aria-hidden="true"><path d="M9 2C8.6 10 9.4 18 9 27M3 21c2.4 2.4 4 4.4 6 6.4 2-2 3.6-4 6-6.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
   </div>
 </section>
 
-<div class="marquee" aria-hidden="true"><div>__MARQUEE__</div></div>
-
-<section class="story" id="dita" aria-label="Një ditë te Clover">
-  <div class="stage" id="stage">
-    <div class="chapters" id="chapters">
-      <article class="chapter on" data-leaf="kafe" data-bg="#E2EBCB" data-fg="#1E2A1F" data-accent="#4A671B" data-pal="day">
-        <div class="time display">07:30</div>
-        <div class="kicker label"><i></i>Mëngjes · Kafe</div>
-        <h2 class="display">Qyteti zgjohet me espreso.</h2>
-        <p>Dyert hapen, makina e kafesë nxehet, matcha rrihet me dorë. Gjethja e parë është e gjelbër.</p>
-        <ul><li>Espreso<span class="mono">€1.00</span></li><li>Makiato e madhe<span class="mono">€1.50</span></li><li>Matcha latte me tërshërë<span class="mono">€3.50</span></li></ul>
-      </article>
-      <article class="chapter" data-leaf="lule" data-bg="#F7DCE5" data-fg="#1E2A1F" data-accent="#B02A5A" data-pal="day">
-        <div class="time display">11:00</div>
-        <div class="kicker label"><i></i>Paradite · Lule</div>
-        <h2 class="display">Buqeta lidhen me dorë.</h2>
-        <p>Lulet vijnë të hënën dhe të enjten. Na tregoni për kë është, dhe e përgatisim deri në 17:00.</p>
-        <ul><li>Buqeta e javës<span class="mono">nga €24</span></li><li>Bozhure me eukalipt<span class="mono">€28</span></li><li>Lule me porosi<span class="mono">nga €18</span></li></ul>
-      </article>
-      <article class="chapter" data-leaf="emb" data-bg="#F6E7C4" data-fg="#1E2A1F" data-accent="#855508" data-pal="day">
-        <div class="time display">15:00</div>
-        <div class="kicker label"><i></i>Pasdite · Ëmbëlsira</div>
-        <h2 class="display">Diçka e ëmbël, pa nxitim.</h2>
-        <p>Trileçe e ditës, kek me limon, një tjetër kafe. Pasditja këtu zgjat pak më shumë.</p>
-        <ul><li>Trileçe<span class="mono">€2.50</span></li><li>Kek me limon dhe mjaltë<span class="mono">€2.80</span></li><li>Tartë me fiq<span class="mono">€3.20</span></li></ul>
-      </article>
-      <article class="chapter" data-leaf="vere" data-bg="#1C1016" data-fg="#F4E9EC" data-accent="#F28DB0" data-pal="eve">
-        <div class="time display">19:00</div>
-        <div class="kicker label"><i></i>Mbrëmje · Verë</div>
-        <h2 class="display">Dritat ulen. Vjen vera.</h2>
-        <p>Pas orës 17:00 shtëpia ndryshon ngjyrë. Gotë vere nga Rahoveci, meze për të ndarë, deri në mesnatë.</p>
-        <ul><li>Vranac, Rahovec<span class="mono">€4 / €22</span></li><li>Pjatë meze për dy<span class="mono">€9.00</span></li><li>Djathë Sharri me mjaltë<span class="mono">€5.50</span></li></ul>
-      </article>
-    </div>
-    <div class="stage-mark">
-      __CLOVER_STAGE__
-      <div class="timeline" aria-hidden="true"><span class="dot" id="dot" style="left:0%"></span>
-        <span class="tk" style="left:0%">07:30</span><span class="tk" style="left:33.3%">11:00</span><span class="tk" style="left:66.6%">15:00</span><span class="tk" style="left:100%">19:00</span></div>
-    </div>
+<section class="sec wrap" id="gjethet">
+  <div class="head rv">
+    <div><p class="kicker">katër gjethe</p><h2>Tre gjëra që i bëjmë mirë. E katërta është fati.</h2></div>
+    <p class="lede">Tërfili me katër gjethe gjendet rrallë, prandaj sjell fat. Te Clover, çdo gjethe është një pjesë e ditës: kafeja, vera, lulet. Gjethja e katërt është për ty, që erdhe.</p>
+  </div>
+  <div class="leaves">
+    <div class="lf rv"><svg viewBox="0 0 100 100" aria-hidden="true"><path pathLength="1" d="__LEAF__" transform="rotate(-8 50 86)"/></svg><b>Kafe</b><i>coffee</i><p>Espreso, makiato, matcha latte. Në mëngjes, me dritën e parë.</p></div>
+    <div class="lf rv"><svg viewBox="0 0 100 100" aria-hidden="true"><path pathLength="1" d="__LEAF__" transform="rotate(6 50 86)"/></svg><b>Verë</b><i>wine</i><p>Një gotë nga Rahoveci kur bie mbrëmja, me diçka për të ndarë.</p></div>
+    <div class="lf rv"><svg viewBox="0 0 100 100" aria-hidden="true"><path pathLength="1" d="__LEAF__" transform="rotate(-4 50 86)"/></svg><b>Lule</b><i>flowers</i><p>Buqeta të lidhura me dorë, në letër kraft, me porosi.</p></div>
+    <div class="lf rv">__CLOVER_CARD__<b>Fati</b><i>luck</i><p>Gjethja e katërt nuk shitet. Ajo vjen me ty.</p></div>
   </div>
 </section>
 
-<section class="sec" id="shenja">
-  <div class="sec-head rv">
-    <div><span class="label" style="color:var(--ink-muted)">Shenja</span><h2 class="display">Katër gjethe.<br>Një shtëpi.</h2></div>
-    <p>Tërfili me katër gjethe është fat, dhe një dhuratë nga Clover duhet të ndihet me fat. Çdo gjethe është një pjesë e shtëpisë, me ngjyrën e saj. Në secilën gjethe është gdhendur hëna e zbehtë që ka tërfili i bardhë në natyrë.</p>
+<section class="sec wrap" id="bordi" style="padding-top:0">
+  <div class="head rv">
+    <div><p class="kicker">bordi</p><h2>Si duket Clover në dorë.</h2></div>
+    <p class="lede">Gota, shishja, buqeta, menuja, kutia, tabela e varur dhe fasada. E njëjta vijë e dorës, e njëjta letër, e njëjta dritë e pasdites.</p>
   </div>
-  <div class="construct">
-    <div class="blueprint rv" id="blueprint">
-      __CLOVER_BLUEPRINT__
-      <button class="now blueprint-btn" type="button" id="bpBtn">Fshih ndërtimin</button>
-    </div>
-    <div class="parts rv">
-      <div class="part"><i style="background:var(--leaf-lule)"></i><div><b>Lule</b><span>Lart djathtas. Lulet dhe buqetat, arsyeja pse ekziston shtëpia. Bozhure, rozë e thellë.</span></div></div>
-      <div class="part"><i style="background:var(--leaf-kafe)"></i><div><b>Kafe</b><span>Poshtë djathtas. Kafeja dhe matcha, banaku i mëngjesit. E gjelbër matcha.</span></div></div>
-      <div class="part"><i style="background:var(--leaf-vere)"></i><div><b>Verë</b><span>Poshtë majtas. Vera dhe mezet, mbrëmja. Ngjyrë vere, më e çelët natën.</span></div></div>
-      <div class="part"><i style="background:var(--leaf-embelsira)"></i><div><b>Ëmbëlsira</b><span>Lart majtas. Ëmbëlsirat dhe gjërat e vogla. Ngjyrë mjalti.</span></div></div>
-    </div>
-  </div>
-  <div class="lockups" id="logot">
-    <a class="lk paper w3 rv" href="assets/Logos/clover-lockup-horizontal-day.svg" download><img src="assets/Logos/clover-lockup-horizontal-day.svg" alt="Clover, horizontal, day"><span class="dl"><span>horizontal · ditë</span><span>SVG ↓</span></span></a>
-    <a class="lk wine w3 rv" href="assets/Logos/clover-lockup-horizontal-evening.svg" download><img src="assets/Logos/clover-lockup-horizontal-evening.svg" alt="Clover, horizontal, evening"><span class="dl"><span>horizontal · mbrëmje</span><span>SVG ↓</span></span></a>
-    <a class="lk peony w2 rv" href="assets/Logos/clover-lockup-stacked-day.svg" download><img src="assets/Logos/clover-lockup-stacked-day.svg" alt="" style="max-height:150px"><span class="dl"><span>stacked</span><span>SVG ↓</span></span></a>
-    <a class="lk matcha w2 rv" href="assets/Logos/clover-mark-ink.svg" download><img src="assets/Logos/clover-mark-ink.svg" alt="" style="max-height:130px"><span class="dl"><span>mark · ink</span><span>SVG ↓</span></span></a>
-    <a class="lk night w2 rv" href="assets/Logos/clover-stamp-evening.svg" download><img src="assets/Logos/clover-stamp-evening.svg" alt="" style="max-height:150px"><span class="dl"><span>stamp</span><span>SVG ↓</span></span></a>
-  </div>
-  <div class="more rv"><a class="pill solid" href="logo.html">Udhëzimet e logos</a><a class="pill" href="https://github.com/granittemaj/clover-design-system/tree/main/assets/Logos">Të gjitha 18 skedarët</a></div>
-</section>
-
-<section class="sec" id="ngjyrat" style="padding-top:0">
-  <div class="sec-head rv">
-    <div><span class="label" style="color:var(--ink-muted)">Ngjyrat</span><h2 class="display">Një ngjyrë<br>për çdo gjethe.</h2></div>
-    <p>Katër ngjyra identiteti, të marra nga gjethet. Ditën janë të thella si boja në letër; natën çelen që të mbajnë dritë mbi aubergine. Kalo mbi to.</p>
-  </div>
-  <div class="chips rv">
-    <div class="chip c-emb" tabindex="0"><span class="mono"><span class="d">#C08A1E</span></span><b>Ëmbëlsira</b><span class="role">Mjalti. Ëmbëlsirat, "e re", "sot".</span></div>
-    <div class="chip c-lule" tabindex="0"><span class="mono">#B02A5A</span><b>Lule</b><span class="role">Bozhure. Lulet, porositë, butoni i mbrëmjes.</span></div>
-    <div class="chip c-vere" tabindex="0"><span class="mono">#5E1A33</span><b>Verë</b><span class="role">Vera. Fasada, lista e verërave, mbrëmja.</span></div>
-    <div class="chip c-kafe" tabindex="0"><span class="mono">#4A671B</span><b>Kafe</b><span class="role">Matcha. Dita, kafeja, butoni i ditës.</span></div>
-  </div>
-  <div class="neutrals rv">
-    <div class="nt" style="background:var(--ground)"><b>ground</b><span class="mono">sfondi</span></div>
-    <div class="nt" style="background:var(--ground-raised)"><b>ground-raised</b><span class="mono">kartat</span></div>
-    <div class="nt" style="background:var(--ground-sunk)"><b>ground-sunk</b><span class="mono">panelet</span></div>
-    <div class="nt" style="background:var(--ink);color:var(--ground)"><b>ink</b><span class="mono">teksti</span></div>
-    <div class="nt" style="background:var(--ink-muted);color:var(--ground)"><b>ink-muted</b><span class="mono">shënimet</span></div>
-    <div class="nt" style="background:var(--candle);color:var(--ground)"><b>candle</b><span class="mono">theksi</span></div>
+  <div class="board">
+__BOARD__
   </div>
 </section>
 
-<section class="sec" id="shkronjat" style="padding-top:0">
-  <div class="type-grid">
-    <p class="giant rv" aria-hidden="true">Ëë<em>ç</em></p>
+<section class="sec wrap" id="logo" style="padding-top:0">
+  <div class="head rv">
+    <div><p class="kicker">logo</p><h2>Shkarko logon.</h2></div>
+    <p class="lede">Të gjitha janë SVG, me shkronjat të kthyera në vija, gati për printim. Version anglisht dhe shqip, në espresso, krem dhe verë.</p>
+  </div>
+  <div class="kit">
+    <a class="k k-a rv" href="assets/Logos/clover-lockup-stacked-en-ink.svg" download><span class="dl">SVG ↓</span><img src="assets/Logos/clover-lockup-stacked-en-ink.svg" alt="Clover, stacked, espresso"></a>
+    <a class="k k-b rv" href="assets/Logos/clover-lockup-horizontal-en-cream.svg" download><span class="dl">SVG ↓</span><img src="assets/Logos/clover-lockup-horizontal-en-cream.svg" alt="Clover, horizontal, cream" style="max-height:150px"></a>
+    <a class="k k-c rv" href="assets/Logos/clover-badge-en-cream.svg" download><span class="dl">SVG ↓</span><img src="assets/Logos/clover-badge-en-cream.svg" alt="Clover round sign"></a>
+    <a class="k k-d rv" href="assets/Logos/clover-lockup-stacked-sq-wine.svg" download><span class="dl">SVG ↓</span><img src="assets/Logos/clover-lockup-stacked-sq-wine.svg" alt="Clover, Albanian descriptor, wine"></a>
+    <a class="k k-e rv" href="assets/Logos/clover-mark-ink.svg" download><span class="dl">SVG ↓</span><img src="assets/Logos/clover-mark-ink.svg" alt="Clover mark" style="max-height:160px"></a>
+  </div>
+  <div class="rules">
+    <div class="rule rv"><b>Hapësira</b>Lëre bosh rreth logos sa lartësia e një gjetheje. Asgjë tjetër brenda saj.</div>
+    <div class="rule rv"><b>Madhësia</b>Logo e plotë jo më e vogël se 30 mm. Vetëm tërfili: jo më i vogël se 8 mm.</div>
+    <div class="rule rv"><b>Ngjyra</b>Espresso mbi krem ose kraft. Krem mbi espresso ose verë. Asnjëherë mbi foto të zhurmshme.</div>
+  </div>
+  <p class="lede rv" style="margin-top:22px">Të gjitha 27 skedarët: <a href="https://github.com/granittemaj/clover-design-system/tree/main/assets/Logos">assets/Logos</a>.</p>
+</section>
+
+<section class="sec wrap" id="ngjyrat" style="padding-top:0">
+  <div class="head rv">
+    <div><p class="kicker">ngjyrat</p><h2>Ngjyrat e dritës së pasdites.</h2></div>
+    <p class="lede">Letra e pazbardhur, kraft-i i buqetave, boja e kafesë, rozja e luleve, gjelbërimi i gjetheve dhe një gotë verë.</p>
+  </div>
+  <div class="tags">
+    <div class="tag rv" style="background:#F5EDE0;color:#4B2E20;box-shadow:var(--shadow-sm),inset 0 0 0 1px #DCCBB3"><b>Krem</b><span>#F5EDE0</span><small>sfondi, letra</small></div>
+    <div class="tag rv" style="background:#C9A57E;color:#4B2E20"><b>Kraft</b><span>#C9A57E</span><small>kuti, qese, buqeta</small></div>
+    <div class="tag rv" style="background:#4B2E20;color:#F5EDE0"><b>Espresso</b><span>#4B2E20</span><small>logoja, teksti</small></div>
+    <div class="tag rv" style="background:#EBCBC6;color:#4B2E20"><b>Trëndafil</b><span>#EBCBC6</span><small>lulet</small></div>
+    <div class="tag rv" style="background:#566545;color:#F5EDE0"><b>Sherbelë</b><span>#566545</span><small>gjethet</small></div>
+    <div class="tag rv" style="background:#5C2230;color:#F5EDE0"><b>Verë</b><span>#5C2230</span><small>mbrëmja, etiketat</small></div>
+    <div class="tag rv" style="background:#F2DDB0;color:#4B2E20"><b>Diell</b><span>#F2DDB0</span><small>drita, theksi</small></div>
+  </div>
+</section>
+
+<section class="sec wrap" id="shkronjat" style="padding-top:0">
+  <div class="type">
+    <p class="giant rv" aria-hidden="true">Ëë Çç</p>
     <div class="rv">
-      <span class="label" style="color:var(--ink-muted)">Shkronjat · Gloock</span>
-      <h2 class="display" style="font-size:clamp(40px,5vw,72px);line-height:1;margin:10px 0 0">Të 36 shkronjat e shqipes, me karakter.</h2>
-      <p class="alphabet">A B C <span class="x">Ç</span> D Dh E <span class="x">Ë</span> F G Gj H I J K L Ll M N Nj O P Q R Rr S Sh T Th U V X Xh Y Z Zh</p>
+      <p class="kicker">shkronjat · Coming Soon</p>
+      <h2 style="font-family:var(--font-hand);font-weight:400;font-size:clamp(36px,4.4vw,58px);line-height:1.05;margin:0 0 18px">E shkruar me dorë, e lexueshme nga larg.</h2>
+      <p class="abc">A B C <em>Ç</em> D Dh E <em>Ë</em> F G Gj H I J K L Ll M N Nj O P Q R Rr S Sh T Th U V X Xh Y Z Zh</p>
     </div>
   </div>
-  <div class="faces">
-    <div class="face rv"><div class="aa display">Aa</div><div class="nm">Gloock</div><div class="use">Titujt dhe fjala "clover". Asnjëherë nën 24px.</div></div>
-    <div class="face rv"><div class="aa" style="font-family:var(--font-sans);font-weight:600">Aa</div><div class="nm">Familjen Grotesk</div><div class="use">Çdo gjë që lexohet: menytë, porositë, faqja.</div></div>
-    <div class="face rv"><div class="aa mono" style="font-size:64px;line-height:1.37">€3.50</div><div class="nm">DM Mono</div><div class="use">Çdo gjë që numërohet: çmime, orare, madhësi.</div></div>
+  <div class="pair">
+    <div class="face rv"><div class="aa hand">Clover</div><b>Coming Soon</b><p>Fjala Clover, titujt, etiketat, çmimet dhe përshkrimi "coffee · wine · flowers".</p></div>
+    <div class="face rv"><div class="aa" style="font-family:var(--font-body);font-weight:300">Aa</div><b>Mali</b><p>Teksti i gjatë: menuja, përshkrimet, faqja. I butë dhe i rrumbullakët si shkronja e dorës.</p></div>
   </div>
 </section>
 
-<section class="night" aria-label="Fasada natën">
-  <div class="sec-head rv">
-    <div><span class="label" style="color:#C4ABB5">Fasada · 21:00</span><h2 class="display">Shihemi<br>në mbrëmje.</h2></div>
-    <p>Fasada është ngjyrë vere gjithë ditën, që rruga ta njohë shtëpinë para se të hapet. Natën, dritarja me lule bëhet fanari i lagjes.</p>
+<section class="sec wrap" id="menuja" style="padding-top:0">
+  <div class="head rv">
+    <div><p class="kicker">menuja</p><h2>Menuja e ditës.</h2></div>
+    <p class="lede">Në shqip dhe në anglisht, me çmime në Coming Soon dhe përshkrime në Mali. Çmimet këtu janë shembull.</p>
   </div>
-  __SHOPFRONT__
+  <div class="menu rv">
+    <svg class="doodle" style="left:6%;top:9%" viewBox="0 0 34 34" aria-hidden="true"><path d="M17 29C8 22 4 17 4 12c0-4 3-7 6.4-7C13 5 15.6 7 17 9.6 18.4 7 21 5 23.6 5 27 5 30 8 30 12c0 5-4 10-13 17z"/></svg>
+    <svg class="doodle" style="right:7%;top:12%;transform:rotate(14deg)" viewBox="0 0 34 34" aria-hidden="true"><path d="M17 17c-3-6-9-7-11-4s1 7 11 4zm0 0c6-3 7-9 4-11s-7 1-4 11zm0 0c3 6 9 7 11 4s-1-7-11-4zm0 0c-6 3-7 9-4 11s7-1 4-11zM17 17l7 14"/></svg>
+    <div class="menu-top"><img src="assets/Logos/clover-mark-ink.svg" alt=""><div class="hand">Clover</div><div class="d">coffee · wine · flowers</div></div>
+    <div class="cols">
+      <div><h3>Kafe <small>coffee</small></h3>
+        <div class="row"><span>Espreso<small>espresso</small></span><span class="p">1.20</span></div>
+        <div class="row"><span>Makiato<small>macchiato</small></span><span class="p">1.50</span></div>
+        <div class="row"><span>Latte<small>me qumësht tërshëre</small></span><span class="p">2.50</span></div>
+        <div class="row"><span>Flat white</span><span class="p">2.50</span></div>
+        <div class="row"><span>Matcha latte</span><span class="p">3.50</span></div></div>
+      <div><h3>Verë <small>wine</small></h3>
+        <div class="row"><span>Gotë vere<small>glass of wine, Rahovec</small></span><span class="p">4.00</span></div>
+        <div class="row"><span>Shishe<small>bottle selection</small></span><span class="p">nga 18.00</span></div>
+        <div class="row"><span>Pjatë meze<small>djathë, ullinj, bukë</small></span><span class="p">8.00</span></div>
+        <div class="row"><span>Ëmbëlsira e ditës<small>today's cake</small></span><span class="p">3.00</span></div></div>
+      <div><h3>Lule <small>flowers</small></h3>
+        <div class="row"><span>Buqetë e freskët<small>fresh bouquet</small></span><span class="p">nga 20.00</span></div>
+        <div class="row"><span>Kuti me lule<small>flower box</small></span><span class="p">nga 30.00</span></div>
+        <div class="row"><span>Lule me porosi<small>made to order</small></span><span class="p">pyet</span></div>
+        <div class="row"><span>Një lule<small>a single stem</small></span><span class="p">3.00</span></div></div>
+    </div>
+    <p class="menu-note">Çmimet në euro · prices in euro</p>
+  </div>
 </section>
-
 </main>
 
 <footer class="foot">
-  <div class="foot-grid">
-    <div><span class="label">Ditë</span>Kafe, matcha, lule<br><span class="mono">07:30–17:00</span></div>
-    <div><span class="label">Mbrëmje</span>Verë, meze<br><span class="mono">17:00–00:00</span></div>
-    <div><span class="label">Sistemi</span><a href="logo.html">Udhëzimet e logos</a><br><a href="applications.html">Aplikime</a><br><a href="https://github.com/granittemaj/clover-design-system/blob/main/BRAND.md">Brand book</a></div>
-    <div><span class="label">Skedarët</span><a href="#logot">Logot</a><br><a href="https://github.com/granittemaj/clover-design-system">GitHub</a><br><a href="tokens.css">tokens.css</a></div>
+  <div class="wrap">
+    <img src="assets/Logos/clover-lockup-stacked-en-cream.svg" alt="Clover · coffee · wine · flowers">
+    <div>
+      <h2>Shihemi te Clover.</h2>
+      <p>Kafe nga mëngjesi, verë kur bie mbrëmja, lule gjithë ditën.</p>
+      <div class="links"><a href="#logo">logot</a><a href="https://github.com/granittemaj/clover-design-system">GitHub</a><a href="https://github.com/granittemaj/clover-design-system/blob/main/BRAND.md">brand book</a><a href="tokens.css">tokens.css</a></div>
+    </div>
   </div>
-  <p class="foot-word" aria-hidden="true">clover</p>
 </footer>
 
 <script>
 (function () {
-  var root = document.documentElement;
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  /* clock + day/evening */
-  var clock = document.getElementById('clock'), part = document.getElementById('part');
-  function tick() {
-    var d = new Date(), hh = String(d.getHours()).padStart(2, '0'), mm = String(d.getMinutes()).padStart(2, '0');
-    clock.textContent = hh + ':' + mm;
-    part.textContent = root.getAttribute('data-theme') === 'dark' ? 'Mbrëmje · verë' : 'Ditë · kafe';
-  }
-  tick(); setInterval(tick, 15000);
-  document.getElementById('now').addEventListener('click', function () {
-    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    try { localStorage.setItem('clover-theme', next); } catch (e) {}
-    tick();
-  });
-
-  /* nav background after the hero */
   var nav = document.getElementById('nav');
-  /* hero: leaves name themselves */
-  var hero = document.getElementById('heroMark'), cap = document.getElementById('leafCaption');
-  var names = { lule: ['Lule', 'lulet dhe buqetat'], kafe: ['Kafe', 'kafeja dhe matcha'], vere: ['Verë', 'vera dhe mezet'], emb: ['Ëmbëlsira', 'ëmbëlsirat'] };
-  hero.querySelectorAll('.lf').forEach(function (lf) {
-    function on() { hero.classList.add('has-leaf'); hero.querySelectorAll('.lf').forEach(function (x) { x.classList.toggle('on', x === lf); }); var n = names[lf.dataset.leaf]; cap.innerHTML = '<b>' + n[0] + '</b>' + n[1]; }
-    lf.addEventListener('mouseenter', on); lf.addEventListener('click', on);
-  });
-  hero.addEventListener('mouseleave', function () { hero.classList.remove('has-leaf'); hero.querySelectorAll('.lf').forEach(function (x) { x.classList.remove('on'); }); });
-  var heroSvg = hero.querySelector('svg');
-  if (!reduce) document.querySelector('.hero').addEventListener('pointermove', function (e) {
-    var r = this.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
-    heroSvg.style.transform = 'rotate(' + (x * 10).toFixed(2) + 'deg) translate(' + (x * 10).toFixed(1) + 'px,' + (y * 8).toFixed(1) + 'px)';
-  });
-
-  /* the day: sticky story */
-  var story = document.getElementById('dita'), stage = document.getElementById('stage');
-  var chapters = [].slice.call(document.querySelectorAll('.chapter')), dot = document.getElementById('dot');
-  var stageLeaves = stage.querySelectorAll('.lf');
-  var PAL = { day: ['--day-lule', '--day-kafe', '--day-vere', '--day-emb'], eve: ['--eve-lule', '--eve-kafe', '--eve-vere', '--eve-emb'] };
-  var current = -1;
-  function setChapter(i) {
-    if (i === current) return; current = i;
-    var c = chapters[i];
-    chapters.forEach(function (x, j) { x.classList.toggle('on', j === i); });
-    stage.style.setProperty('--st-bg', c.dataset.bg);
-    stage.style.setProperty('--st-fg', c.dataset.fg);
-    stage.style.setProperty('--st-accent', c.dataset.accent);
-    var p = PAL[c.dataset.pal];
-    ['lule', 'kafe', 'vere', 'emb'].forEach(function (k, j) { stage.style.setProperty('--c-' + k, 'var(' + p[j] + ')'); });
-    stageLeaves.forEach(function (lf) { lf.classList.toggle('on', lf.dataset.leaf === c.dataset.leaf); });
-  }
-  setChapter(0);
-
-  /* reveal */
-  var io = 'IntersectionObserver' in window ? new IntersectionObserver(function (es) {
+  function onScroll() { nav.classList.toggle('on', window.scrollY > 30); }
+  window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  var els = document.querySelectorAll('.rv');
+  if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; }
+  var io = new IntersectionObserver(function (es) {
     es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-  }, { rootMargin: '0px 0px -8% 0px' }) : null;
-  document.querySelectorAll('.rv').forEach(function (el) { io ? io.observe(el) : el.classList.add('in'); });
-
-  var ticking = false;
-  function onScroll() {
-    ticking = false;
-    nav.classList.toggle('scrolled', window.scrollY > 40);
-    var r = story.getBoundingClientRect(), span = r.height - window.innerHeight;
-    var p = Math.min(1, Math.max(0, -r.top / span));
-    setChapter(Math.min(3, Math.floor(p * 4.0001)));
-    dot.style.left = (Math.min(1, p * 1.05) * 100).toFixed(2) + '%';
-  }
-  window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
-  onScroll();
-
-  /* construction lines */
-  var bp = document.getElementById('blueprint'), bpBtn = document.getElementById('bpBtn');
-  bpBtn.addEventListener('click', function () {
-    var plain = bp.classList.toggle('plain');
-    bpBtn.textContent = plain ? 'Shfaq ndërtimin' : 'Fshih ndërtimin';
-  });
+  }, { rootMargin: '0px 0px -8% 0px' });
+  els.forEach(function (e) { io.observe(e); });
 })();
 </script>
 </body>
